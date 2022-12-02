@@ -1,0 +1,237 @@
+{% extends "apps/parts/base.html" %}
+{% load static %}
+
+{% block title %}
+    Post
+{% endblock %}
+
+{% block content %}
+    <div id="content">
+        <div class="post">
+            <div class="container">
+                <div class="post-standard">
+                    <div class="post-standard__banner">
+                        <div class="post-standard__banner__image">
+                            <img src="{{ blog.main_picture.url }}"
+                                 alt="Post banner image"/>
+                        </div>
+                        <div class="post-standard__banner__content">
+                            <div class="post-card -center">
+                                <div></div>
+                                <div class="card__content">
+                                    <h5 class="card__content-category">
+                                        -
+                                        {% for category in blog_category %}
+                                            {{ category.name }}-
+                                        {% endfor %}
+
+
+                                    </h5>
+                                    <a class="card__content-title">
+                                        {{ blog.title }}
+                                    </a>
+                                    <div class="card__content-info">
+                                        <div class="info__time"><i class="far fa-clock"></i>
+                                            <p>{{ blog.created_at|date:"D d-m-y" }}</p>
+                                        </div>
+                                        <div class="info__comment"><i class="far fa-comment"></i>
+                                            <p>{{ blog.comment_count }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-md-8 mx-auto">
+                            <div class="post-standard__content">
+                                <!-- Post share icons -->
+                                <div id="post-share">
+                                    <h5>Share:</h5>
+                                    <div class="social-media">
+                                        <a href="#" style="background-color: #075ec8">
+                                            <i class="fab fa-facebook-f"></i>
+                                        </a>
+                                        <a href="#" style="background-color: #40c4ff">
+                                            <i class="fab fa-twitter"></i>
+                                        </a>
+                                        <a href="#"
+                                           style="background-image: linear-gradient(to top, #f2a937, #d92e73, #9937b7, #4a66d3), linear-gradient(to top, #af00e1, #ff9e35)">
+                                            <i class="fab fa-inscategoryram"></i>
+                                        </a>
+                                        <a href="#" style="background-color: #ff0000">
+                                            <i class="fab fa-youtube"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- content Starts here -->
+                                <p class="paragraph">
+                                    {{ blog.description|safe }}
+                                </p>
+                                <div class="post-card-quote -border">
+                                    <div class="qoute__icon">
+                                        <i class="fas fa-quote-left"></i>
+                                    </div>
+                                    {#                                    <p class="quote__content"></p>#}
+                                    {#                                    <h5 class="quote__author"></h5>#}
+                                </div>
+                                <p class="paragraph">
+                                </p>
+                                <!-- img size 370 x 370 -->
+
+                                <p class="paragraph">
+                                </p>
+                                <p class="paragraph">
+
+                                </p>
+                                <p class="paragraph">
+                                </p>
+                                <p class="paragraph">
+
+                                </p>
+                                <!-- Post footer -->
+                                <div class="post-footer">
+                                    <div class="post-footer__categories center">
+                                        <div class="categories-group">
+                                            {% for category in blog_category %}
+                                                <a class="tag-btn"
+                                                   href="{% url 'blog_category_view'  category.slug %}">{{ category.name }}
+                                                </a>
+
+                                            {% endfor %}
+
+
+                                        </div>
+                                    </div>
+                                    <div class="post-footer__author">
+                                        <div class="author__avatar">
+                                            <!-- img size 150 x 150 -->
+                                            <img src="{% static 'apps/assets/images/post_detail/auth.png' %}"
+                                                 alt="Author avatar"/>
+                                        </div>
+                                        <!-- Author Info -->
+                                        <div class="author__info">
+                                            <h5>{{ blog.author }}</h5>
+                                            <p>Description author: </p>
+                                            <!-- social Media -->
+                                            <div class="social-media">
+                                                <a href="#">
+                                                    <i class="fab fa-facebook-f"></i>
+                                                </a>
+                                                <a href="#">
+                                                    <i class="fab fa-twitter"></i>
+                                                </a>
+                                                <a href="#">
+                                                    <i class="fab fa-inscategoryram"></i>
+                                                </a>
+                                                <a href="#">
+                                                    <i class="fab fa-dribbble"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Related Posts -->
+                                    <div class="post-footer__related">
+                                        <div class="post-footer__related__item -prev">
+                                            <!-- <a href="post_standard.html"> <i class="fas fa-chevron-left"></i>Previous posts</a> -->
+                                            <div class="post-footer__related__item__content">
+                                                <!-- img size 360 x 360 -->
+                                                <img src="{% static 'apps/assets/images/posts/webdesign.jpg' %}"
+                                                     alt="Relate news image"/>
+                                                <div class="post-card ">
+                                                    <div></div>
+                                                    <div class="card__content">
+                                                        <h5 class="card__content-category">Open Source</h5>
+                                                        <a class="card__content-title" href="#">Best design resources
+                                                            websites every developer should bookmark</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="post-footer__related__item -next">
+                                            <!-- <a href="#">Next posts<i class="fas fa-chevron-right"></i></a> -->
+                                            <div class="post-footer__related__item__content">
+                                                <div class="post-card -right">
+                                                    <div></div>
+                                                    <div class="card__content">
+                                                        <h5 class="card__content-category">Open Source</h5>
+                                                        <a class="card__content-title" href="#">Best Open Source Tools
+                                                            For Developers</a>
+                                                    </div>
+                                                </div>
+                                                <img src="{% static 'apps/assets/images/posts/opensource.jpg' %}"
+                                                     alt="Relate news image"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- comments  -->
+                                    <div class="post-footer__comment">
+                                        <h3 class="comment-title"><span>3 comment</span></h3>
+                                        <div class="post-footer__comment__detail">
+
+                                            <div class="comment__item">
+                                                <div class="comment__item__avatar">
+                                                    <img src="{% static 'apps/assets/images/post_detail/avatar/1.png' %}"
+                                                         alt="Author avatar"/>
+                                                </div>
+                                                <div class="comment__item__content">
+                                                    <div class="comment__item__content__header">
+                                                        <h5>David Yu</h5>
+                                                        <div class="data">
+                                                            <p><i class="far fa-clock"></i>Nov 02, 2020</p>
+                                                            <p><i class="far fa-heart"></i>12</p>
+                                                            <p><i class="far fa-share-square"></i>1</p>
+                                                        </div>
+                                                    </div>
+                                                    <p>Exactly. E.g. In IoT doing Machine Learning at the Edge (as in
+                                                        Edge Computing) oftentimes Kubernetes or containers in
+                                                        general aren't possible. Serverless is the only lightweight code
+                                                        that can actually run there.</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="comment__item">
+                                                <div class="comment__item__avatar"><img
+                                                        src="{% static 'apps/assets/images/post_detail/avatar/3.png' %}"
+                                                        alt="Author avatar"/></div>
+                                                <div class="comment__item__content">
+                                                    <div class="comment__item__content__header">
+                                                        <h5>Rodgers </h5>
+                                                        <div class="data">
+                                                            <p><i class="far fa-clock"></i>Nov 02, 2020</p>
+                                                            <p><i class="far fa-heart"></i>12</p>
+                                                            <p><i class="far fa-share-square"></i>1</p>
+                                                        </div>
+                                                    </div>
+                                                    <p>Awesome article. Great job!!!
+                                                        It offers the elements to compounds the "Big Picture" which can
+                                                        guide our decisions.Thank you.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- comment Form -->
+                                        <h3 class="comment-title"><span>Leave a comment</span></h3>
+                                        <div class="post-footer__comment__form">
+                                            <form action="{% url 'post_view' object.slug %}" method="post">
+                                                {% csrf_token %}
+                                                <div class="row">
+                                                <textarea cols="30" rows="5" placeholder="Messages"
+                                                          name="message"></textarea>
+                                                </div>
+                                                <div class="center">
+                                                    <input type="hidden">
+                                                    <button type="submit" class="btn btn-outline-primary">Submit
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

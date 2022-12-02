@@ -1,0 +1,121 @@
+{% extends "apps/parts/base.html" %}
+{% load static %}
+
+{% block title %}
+    Fuse
+{% endblock title %}
+
+{% block content %}
+    <div id="content">
+        <div class="container">
+            <div class="blog-with-sidebar">
+                <div class="row">
+                    <!-- Right side bar starts here which contains the Category & Trending Post -->
+                    <div class="col-12 col-md-5 col-lg-4 order-md-2">
+                        <div class="blog-sidebar">
+                            <div class="blog-sidebar-section -category">
+                                <div class="center-line-title">
+                                    <!-- Post category sidebar -->
+                                    <h5>Categories</h5>
+                                </div>
+                                {% for category in categories %}
+                                    <a class="category -bar"
+                                       href="{% url 'blog_category_view' category.slug %}">
+                                        <!--Category 1::Background Image size is 340 x 80   -->
+                                        <div class="category__background"
+                                             style="background-image: url({{ category.picture.url }})">
+                                        </div>
+                                        <h5 class="title">{{ category.name }}</h5>
+                                        <h5 class="quantity">{{ category.blog_count }}</h5>
+                                    </a>
+                                {% endfor %}
+
+                            </div>
+                            <!-- Trending Post Side Bar Section-->
+                            <div class="blog-sidebar-section -trending-post">
+                                <div class="center-line-title">
+                                    <h5>Trending post</h5>
+                                </div>
+
+                                <!--Trending Post 1 -->
+                                {% for blog in news %}
+                                    <div class="trending-post">
+                                        <div class="trending-post_image">
+                                            <div class="rank">1</div>
+                                            <!--Img size is 100 x 100 -->
+                                            <img src="{{ blog.main_picture.url }}"/>
+                                        </div>
+
+                                        <div class="trending-post_content">
+                                            <a class="card__content-title" href="{% url 'post_view' blog.slug %}">
+                                                <h5>{{ blog.title }}</h5>
+                                            </a>
+                                            <!-- Category Header -->
+
+                                            <a href="{% url 'post_view' blog.slug %}">{{ blog.description|truncatechars:50|safe }}</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <a class="more-btn" href="{% url 'blog_category_view' 'all' %}">Show more </a>
+
+
+                            </div>
+                            <!-- Subscribe Form -->
+                            <form class="subcribe-box subcribe-box" action="/" method="POST">
+                                <h5>Subcribe</h5>
+                                <p>Lorem ipsum dolor amet, consectetur adipiscing elit, sed tempor.</p>
+                                <input placeholder="Your email" name="email" type="email"/>
+                                <a class="btn -normal" href="#">Subcribe</a>
+                            </form>
+                        </div>
+                    </div>
+                    <!--- End of Right Side Bar ----->
+
+                    <div class="col-12 col-md-7 col-lg-8 order-md-1">
+                        <div class="row">
+                            {% for best in bests %}
+                                <div class="col-sm-6 col-md-12">
+                                    <div class="post-card -full -center">
+                                        <a class="card__cover" href="{% url 'post_view' best.slug %}">
+                                            <img src="{{ best.main_picture.url }}"
+                                                 alt="Getting started with DevOps automation"/>
+                                        </a>
+                                        <div class="card__content">
+                                            <!-- Content Category -->
+{#                                            <h5 class="card__content-category">{{ best.category }}</h5>#}
+                                            <!-- Content Heading -->
+                                            <a class="card__content-title" href="{% url 'post_view' best.slug %}">
+                                                {{ best.title }}
+                                            </a>
+                                            <div class="card__content-info">
+                                                <!-- Content Author -->
+                                                <div class="info__time info__author"><i class="far fa-user"></i>
+                                                    <p>{{ best.author }}</p>
+                                                </div>
+                                                <!-- Content Time and Date -->
+                                                <div class="info__time"><i class="far fa-clock"></i>
+                                                    <p>{{ best.created_at|date:"D d-m-y" }}</p>
+                                                </div>
+                                                <!-- Comments -->
+                                                <div class="info__comment"><i class="far fa-comment"></i>
+                                                    <p>{{ best.comment_count }}</p>
+                                                </div>
+                                            </div>
+                                            <!-- post Description -->
+                                            <p class="card__content-description">
+                                                {{ best.description|truncatechars:200|safe }}
+                                            </p>
+                                            <a class="more-btn" href="{% url 'post_view' best.slug %}">Read more </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
