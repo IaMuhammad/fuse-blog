@@ -24,19 +24,16 @@
                                     <!-- Blog category sidebar -->
                                     <h5>Categories</h5>
                                 </div>
-                                {% for category in categories %}
-                                    {% if category.blog_count > 0 %}
-                                        <a class="category -barcategory -bar "
-                                           href="{% url 'blog_category_view' category.slug %}">
-                                            <!--Category 1::Background Image size is 340 x 80   -->
-                                            <div class="category__background"
-                                                 style="background-image: url({{ category.picture.url }})">
-                                            </div>
-                                            <h5 class="title">{{ category.name }}</h5>
-                                            <h5 class="quantity">{{ category.blog_count }}</h5>
-                                        </a>
-
-                                    {% endif %}
+                                {% for category in categories_list %}
+                                    <a class="category -barcategory -bar "
+                                       href="{% url 'blog_category_view' category.slug %}">
+                                        <!--Category 1::Background Image size is 340 x 80   -->
+                                        <div class="category__background"
+                                             style="background-image: url({{ category.picture.url }})">
+                                        </div>
+                                        <h5 class="title">{{ category.name }}</h5>
+                                        <h5 class="quantity">{{ category.blog_count }}</h5>
+                                    </a>
                                 {% endfor %}
 
                             </div>
@@ -45,26 +42,24 @@
                                     <h5>Trending post</h5>
                                 </div>
 
-                                {#                                {% for blog in trending_posts %}#}
-                                {#                                    <div class="trending-post">#}
-                                {#                                        <div class="trending-post_image">#}
-                                {#                                            <div class="rank">#}
-                                {#                                                {{ forloop.counter }}#}
-                                {#                                            </div>#}
-                                {#                                            <!--Img size is 100 x 100 -->#}
-                                {#                                            <img src="{{ blog.main_picture.url }}"/>#}
-                                {#                                        </div>#}
-                                {##}
-                                {#                                        <div class="trending-post_content">#}
-                                {#                                            <a class="card__content-title" href="{% url 'post_view'  blog.blog__slug %}">#}
-                                {#                                                <h5>{{ blog.blog__title }}</h5>#}
-                                {#                                            </a>#}
-                                {#                                            <!-- Category Header -->#}
-                                {##}
-                                {#                                            <a href="{% url 'post_view' blog.blog__slug %}">{{ blog.blog__description|striptags|truncatechars:50|safe }}</a>#}
-                                {#                                        </div>#}
-                                {#                                    </div>#}
-                                {#                                {% endfor %}#}
+                                {% for blog in news %}
+                                    <div class="trending-post">
+                                        <div class="trending-post_image">
+                                            <div class="rank">1</div>
+                                            <!--Img size is 100 x 100 -->
+                                            <img src="{{ blog.main_picture.url }}"/>
+                                        </div>
+
+                                        <div class="trending-post_content">
+                                            <a class="card__content-title" href="{% url 'post_view'  blog.slug %}">
+                                                <h5>{{ blog.title }}</h5>
+                                            </a>
+                                            <!-- Category Header -->
+
+                                            <a href="{% url 'post_view' blog.slug %}">{{ blog.description|truncatechars:50|safe }}</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
                                 <a class="more-btn" href="{% url 'blog_category_view' 'all' %}">Show more </a>
 
 
@@ -86,64 +81,44 @@
                             <div class="category__header__filter">
                             </div>
                         </div>
-                        <div class="category_content">
-                            <div class="col-12">
-                                {% for blog in blogs %}
-                                    <div class="category_content">
-                                        <div class="col-12">
-                                            <div class="post-card -small -horizontal">
-                                                <a class="card__cover" href="{% url 'post_view' blog.slug %}"
-                                                   tabindex="0">
-                                                    <img src="{{ blog.main_picture.url }}"/></a>
-                                                <div class="card__content">
-                                                    <h5 class="card__content-category">{{ blog.title }}</h5>
-                                                    <a class="card__content-title"
-                                                       href="{% url 'post_view' blog.slug %}"
-                                                       tabindex="0"></a>
-                                                    <div class="card__content-info">
-                                                        <div class="info__time">
-                                                            <i class="far fa-clock"></i>
-                                                            <p>{{ blog.created_at|date:"d-m-y" }}</p>
-                                                        </div>
-                                                        <div class="info__comment"><i class="far fa-comment"></i>
-                                                            {#                                                    <p>{{ blog.comment_count }}</p>#}
-                                                        </div>
-                                                    </div>
-                                                    <p class="card__content-description">
-                                                        {{ blog.description|striptags|truncatechars:150|safe }}
-                                                    </p>
+                        {% for blog in blogs %}
+                            <div class="category_content">
+                                <div class="col-12">
+                                    <div class="post-card -small -horizontal">
+                                        <a class="card__cover" href="{% url 'post_view' blog.slug %}" tabindex="0">
+                                            <img src="{{ blog.main_picture.url }}"/></a>
+                                        <div class="card__content">
+                                            <h5 class="card__content-category">{{ blog.title }}</h5>
+                                            <a class="card__content-title" href="{% url 'post_view' blog.slug %}"
+                                               tabindex="0"></a>
+                                            <div class="card__content-info">
+                                                <div class="info__time">
+                                                    <i class="far fa-clock"></i>
+                                                    <p>{{ blog.created_at|date:"d-m-y" }}</p>
+                                                </div>
+                                                <div class="info__comment"><i class="far fa-comment"></i>
+{#                                                    <p>{{ blog.comment_count }}</p>#}
                                                 </div>
                                             </div>
+                                            <p class="card__content-description">
+                                                {{ blog.description|truncatechars:150|safe }}
+                                            </p>
                                         </div>
                                     </div>
-                                {% endfor %}
+                                </div>
                             </div>
-                        </div>
+                        {% endfor %}
+
 
 
                         <div class="pagination">
-                            {% if page_obj.has_other_pages %}
-                                <ul class="pagination">
-                                    {% if page_obj.has_previous %}
-                                        <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
-                                    {% else %}
-                                        <li class="disabled"><span>&laquo;</span></li>
-                                    {% endif %}
-                                    {% for i in page_obj.paginator.page_range %}
-                                        {% if page_obj.number == i %}
-                                            <li class="active"><span>{{ i }} <span
-                                                    class="sr-only">(current)</span></span></li>
-                                        {% else %}
-                                            <li><a href="?page={{ i }}">{{ i }}</a></li>
-                                        {% endif %}
-                                    {% endfor %}
-                                    {% if page_obj.has_next %}
-                                        <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
-                                    {% else %}
-                                        <li class="disabled"><span>&raquo;</span></li>
-                                    {% endif %}
-                                </ul>
-                            {% endif %}
+
+                            <ul>
+                                <li class="active"><a href="javascript:void(0)">1</a></li>
+                                <li class="pagination__page-number"><a href="javascript:void(0)">2</a></li>
+                                <li class="pagination__page-number"><a href="javascript:void(0)">3</a></li>
+                                <li><a class="next" href="javascript:void(0)">></a></li>
+                            </ul>
                         </div>
 
 

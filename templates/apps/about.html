@@ -22,21 +22,32 @@
                     <div class="col-12 col-sm-8 col-md-6 mx-auto">
                         <!-- image size 560 x 522 -->
                         <div class="about-us__image">
-                            <img src="{{ info.picture.url }}" alt="About us image"/>
+                            <img src="{% static 'apps/assets/images/posts/about.png' %}" alt="About us image"/>
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="about-us__content">
                             <h3>Thank you for visit out my website.</h3>
-                            <p>
-                                {{ info.about_us|safe }}
-                            </p>
+                            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+                                laudantium, totam rem aperiam,
+                                eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+                                explicabo. Nemo enim ipsam
+                                voluptatem quluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni
+                                dolores
+                                sit amet vel facilisis
+                                beatae vitae dicta sunt.</p>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                                ut
+                                labore et dolore magna
+                                aliqua. Quis ipsum suspendisse ultrices gravida. Risus commodo viverra maecenas accumsan
+                                lacus.</p>
                             <div class="follow">
                                 <p>Follow us:</p>
                                 <div class="social-block">
-                                    <a href="{{ info.social.facebook }}"><i class="fab fa-facebook-f"></i></a>
-                                    <a href="{{ info.social.twitter }}"><i class="fab fa-twitter"></i></a>
-                                    <a href="{{ info.social.instagram }}"><i class="fab fa-instagram"></i></a>
+                                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="#"><i class="fab fa-twitter"></i></a>
+                                    <a href="#"><i class="fab fa-inscategoryram"></i></a>
+                                    <a href="#"><i class="fab fa-dribbble"></i></a>
                                 </div>
                             </div>
                         </div>

@@ -18,23 +18,17 @@
                                     <!-- Post category sidebar -->
                                     <h5>Categories</h5>
                                 </div>
-                                {% if categories %}
-                                    {% for category in categories %}
-                                        {% if category.blog_count > 0 %}
-
-                                            <a class="category -bar"
-                                               href="{% url 'blog_category_view' category.slug %}">
-                                                <!--Category 1::Background Image size is 340 x 80   -->
-                                                <div class="category__background"
-                                                     style="background-image: url({{ category.picture.url }})">
-                                                </div>
-                                                <h5 class="title">{{ category.name }}</h5>
-                                                <h5 class="quantity">{{ category.blog_count }}</h5>
-                                            </a>
-                                        {% endif %}
-
-                                    {% endfor %}
-                                {% endif %}
+                                {% for category in categories %}
+                                    <a class="category -bar"
+                                       href="{% url 'blog_category_view' category.slug %}">
+                                        <!--Category 1::Background Image size is 340 x 80   -->
+                                        <div class="category__background"
+                                             style="background-image: url({{ category.picture.url }})">
+                                        </div>
+                                        <h5 class="title">{{ category.name }}</h5>
+                                        <h5 class="quantity">{{ category.blog_count }}</h5>
+                                    </a>
+                                {% endfor %}
 
                             </div>
                             <!-- Trending Post Side Bar Section-->
@@ -44,28 +38,24 @@
                                 </div>
 
                                 <!--Trending Post 1 -->
+                                {% for blog in news %}
+                                    <div class="trending-post">
+                                        <div class="trending-post_image">
+                                            <div class="rank">1</div>
+                                            <!--Img size is 100 x 100 -->
+                                            <img src="{{ blog.main_picture.url }}"/>
+                                        </div>
 
-                                {#                                {% for blog in trending_posts %}#}
-                                {#                                    <div class="trending-post">#}
-                                {#                                        <div class="trending-post_image">#}
-                                {#                                            <div class="rank">#}
-                                {#                                                 {{ forloop.counter }}#}
-                                {#                                            </div>#}
-                                {#                                            <!--Img size is 100 x 100 -->#}
-                                {#                                            <img src="{% url blog.blog__main_picture %}"/>#}
-                                {#                                        </div>#}
-                                {##}
-                                {##}
-                                {#                                        <div class="trending-post_content">#}
-                                {#                                            <a class="card__content-title" href="{% url 'post_view' blog.blog__slug %}">#}
-                                {#                                                <h5>{{ blog.blog__title|truncatechars:20 }}</h5>#}
-                                {#                                            </a>#}
-                                {#                                            <!-- Category Header -->#}
-                                {##}
-                                {#                                            <a href="{% url 'post_view' blog.blog__slug %}">{{ blog.blog__description|striptags|truncatechars:50|safe }}</a>#}
-                                {#                                        </div>#}
-                                {#                                    </div>#}
-                                {#                                {% endfor %}#}
+                                        <div class="trending-post_content">
+                                            <a class="card__content-title" href="{% url 'post_view' blog.slug %}">
+                                                <h5>{{ blog.title }}</h5>
+                                            </a>
+                                            <!-- Category Header -->
+
+                                            <a href="{% url 'post_view' blog.slug %}">{{ blog.description|truncatechars:50|safe }}</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
                                 <a class="more-btn" href="{% url 'blog_category_view' 'all' %}">Show more </a>
 
 
@@ -83,7 +73,6 @@
 
                     <div class="col-12 col-md-7 col-lg-8 order-md-1">
                         <div class="row">
-
                             {% for best in bests %}
                                 <div class="col-sm-6 col-md-12">
                                     <div class="post-card -full -center">
@@ -93,7 +82,7 @@
                                         </a>
                                         <div class="card__content">
                                             <!-- Content Category -->
-                                            {#                                            <h5 class="card__content-category">{{ best.category }}</h5>#}
+{#                                            <h5 class="card__content-category">{{ best.category }}</h5>#}
                                             <!-- Content Heading -->
                                             <a class="card__content-title" href="{% url 'post_view' best.slug %}">
                                                 {{ best.title }}
@@ -114,7 +103,7 @@
                                             </div>
                                             <!-- post Description -->
                                             <p class="card__content-description">
-                                                {{ best.description|striptags|truncatechars:200|safe }}
+                                                {{ best.description|truncatechars:200|safe }}
                                             </p>
                                             <a class="more-btn" href="{% url 'post_view' best.slug %}">Read more </a>
                                         </div>
@@ -130,7 +119,3 @@
         </div>
     </div>
 {% endblock content %}
-
-{% comment %}
-scp filename ssh
-{% endcomment %}

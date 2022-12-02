@@ -18,16 +18,18 @@
                     <div class="col-12 col-md-6">
                         <div class="contact-us__info">
                             <h3 class="contact-title">GET IN TOUCH</h3>
-                            <p class="contact-description">{{ info.about_us|safe }} </p>
+                            <p class="contact-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                                do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse
+                                ultrices gravida. Risus commodo viverra maecenas accumsan lacus vel facilisis. </p>
                             <div class="contact-method">
                                 <div class="contact-method__item"><i class="fas fa-map-marker-alt"></i>
-                                    <p>{{ info.adress }}</p>
+                                    <p>Dar es saalam, Tanzania</p>
                                 </div>
                                 <div class="contact-method__item"><i class="fas fa-mobile-alt"></i>
-                                    <p>+{{ info.phone }}</p>
+                                    <p>+255 123456789 | +255 123546977</p>
                                 </div>
                                 <div class="contact-method__item"><i class="far fa-envelope-open"></i></i>
-                                    <p>{{ info.email }}</p>
+                                    <p>hello@fuse.com</p>
                                 </div>
                             </div>
                         </div>
@@ -41,10 +43,10 @@
                     <div class="col-12 col-md-6">
                         <div class="contact-us__form">
                             <h3 class="contact-title">LEAVE A MESSAGE</h3>
-                            <form action="{% url 'contact_view' user.username %}" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="author_id" value="{{ user.id }}">
-                                <input type="text" name="subject" placeholder="Subject">
+                            <form action="/">
+                                <input type="text" placeholder="Name" name="name"/>
+                                <input type="email" placeholder="Email" name="email"/>
+                                <input type="text" placeholder="Website" name="website"/>
                                 <textarea name="message" cols="30" rows="8" placeholder="Message"></textarea>
                                 <button class="btn -normal">Send message</button>
                             </form>
@@ -53,7 +55,7 @@
                 </div>
             </div>
         </div>
-        <div class="container">Send
+        <div class="container">
             <div class="subcribe-bar">
                 <div class="row">
                     <div class="col-12 col-md-6">
@@ -63,8 +65,7 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
-                        <form class="subcribe-bar__form" method="post" action="{% url 'contact_view' user.username %}">
-                            {% csrf_token %}
+                        <form class="subcribe-bar__form" action="/">
                             <input type="text" placeholder="You email"/>
                             <button class="btn -normal">Subcribe</button>
                         </form>
