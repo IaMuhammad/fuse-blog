@@ -10,8 +10,8 @@ urlpatterns = [
     path('contact', ContactPageVIew.as_view(), name='contact_view'),
     path('blog/<str:slug>', BlogPageView.as_view(), name='post_view'),
     path('blog/<str:slug>/create', CreateCommentBLog.as_view(), name='comment_view'),
-    path('user-edit/<int:pk>', UserUpdateView.as_view(), name='user_update_view'),
 
+    path('user-edit/<int:pk>', UserUpdateView.as_view(), name='user_update_view'),
     path('register', RegisterPageView.as_view(), name='register_view'),
     path('login', LoginPageView.as_view(), name='login_view'),
     path('logout', CustomLogoutView.as_view(), name='logout_view'),

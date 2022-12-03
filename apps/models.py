@@ -9,6 +9,10 @@ from django.utils.translation import gettext_lazy as _
 class CustomUser(AbstractUser):
     email = EmailField(max_length=255, unique=True)
     phone = CharField(max_length=255, unique=True)
+    birthday = DateField(auto_now=True)
+    description = TextField(null=True, blank=True)
+    majority = CharField(max_length=255, null=True, blank=True)
+    photo = ImageField(default='users/defaauluser.png')
 
 
 class Category(Model):
