@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import AbstractUser
 from django.db.models import Model, SlugField, CharField, ForeignKey, CASCADE, DateField, TextField, ImageField, \
@@ -14,6 +16,10 @@ class CustomUser(AbstractUser):
     majority = CharField(max_length=255, null=True, blank=True)
     photo = ImageField(default='users/defaauluser.png')
 
+    @property
+    def years_old(self):
+        return datetime.now().year - self.birthday.year
+
 
 class Category(Model):
     name = CharField(max_length=255)
@@ -23,6 +29,7 @@ class Category(Model):
     @property
     def blog_count(self):
         return self.blog_set.count()
+
 
     def save(self, *args, **kwargs):
         if not self.slug:
