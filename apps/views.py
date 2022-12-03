@@ -155,7 +155,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     form_class = UpdateForm
     success_url = reverse_lazy('main_view')
     # slug_url_kwarg = 'username'
-    template_name = 'auth/auth/settings.html'
+    template_name = 'auth/auth/ed.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
