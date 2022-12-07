@@ -6,11 +6,26 @@ from django.urls import reverse, path
 from django.utils.html import format_html
 
 from apps import models
-from apps.models import Blog, Category, Coment
+from apps.models import Blog, Category, Coment, CustomUser
 
 
 # Register your models here.
 
+@register(CustomUser)
+class User(ModelAdmin):
+    list_display = ('username', 'first_name_field', 'last_name_field', 'is_superuser')
+
+    def first_name_field(self, obj):
+        if obj.first_name:
+            return obj.first_name
+        else:
+            return 'null'
+
+    def last_name_field(self, obj):
+        if obj.last_name:
+            return obj.last_name
+        else:
+            return 'null'
 @register(Blog)
 class Blog(ModelAdmin):
     # change_form_template = "admin/base_site.html"
@@ -19,17 +34,12 @@ class Blog(ModelAdmin):
     change_form_template = "admin/change_form.html"
 
     def response_change(self, request, obj):
-        if "_cancel" in request.POST:
+        if request.POST.get('status'):
             post = models.Blog.objects.filter(id=obj.id).first()
-            post.is_active = models.Blog.Active.canceled
+            post.is_active = request.POST.get('status')
             post.save()
             return HttpResponseRedirect("../")
-        elif "_active" in request.POST:
-            post = models.Blog.objects.filter(id=obj.id).first()
-            post.is_active = models.Blog.Active.active
-            post.save()
-            return HttpResponseRedirect("../")
-        elif "_view" in request.POST:
+        elif request.POST.get("_view"):
             return redirect('post_view', obj.slug)
 
         return super().response_change(request, obj)

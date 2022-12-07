@@ -1,12 +1,13 @@
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.urls import reverse_lazy, reverse
-from django.utils.html import format_html
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, CreateView, DetailView, UpdateView, FormView
 
-from apps.forms import RegisterForm, LoginForm, UpdateForm, BlogForm
-from apps.models import Blog, Category, CustomUser, Coment
+from apps.forms import RegisterForm, LoginForm, BlogForm, UpdateUserForm
+from apps.models import Blog, Category, CustomUser, Coment, Message
 
 
 # Create your views here.
@@ -46,6 +47,7 @@ class BlogListView(ListView):
             context['path'] = s
         return context
 
+
 class CreateCommentBLog(CreateView, LoginRequiredMixin):
     model = Coment
     fields = '__all__'
@@ -57,16 +59,33 @@ class CreateCommentBLog(CreateView, LoginRequiredMixin):
         form.instance.blog = self.request.path.split('/')[-1]
         return super().form_valid(form)
 
-    def form_invalid(self, form):
-        return super().form_invalid(form)
 
 
 class AboutPageView(TemplateView):
     template_name = 'apps/about.html'
 
 
-class ContactPageVIew(TemplateView):
+class ContactPageVIew(CreateView):
     template_name = 'apps/contact.html'
+    model = Message
+    fields = ('author', 'message')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+class SendMessageAdmin(CreateView, LoginRequiredMixin):
+    model = Message
+    fields = '__all__'
+    template_name = 'apps/contact.html'
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    success_url = reverse_lazy('contact_view')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.blog = self.request.path.split('/')[-1]
+        return super().form_valid(form)
 
 
 class BlogPageView(DetailView, FormView):
@@ -100,11 +119,13 @@ class CustomLogoutView(LogoutView):
 
 class FooterView(ListView):
     template_name = 'apps/parts/footer.html'
+    queryset = Blog.objects.order_by('created_at')[:3]
+    context_object_name = 'footer_blogs'
     model = Blog
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
-        context['footers'] = Blog.objects.filter('created_at')[:3]
+        # context['footers'] = Blog.objects.order_by('created_at')
         return context
 
 
@@ -149,22 +170,29 @@ class LoginPageView(LoginView):
         return super().form_valid(form)
 
 
-
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = CustomUser
-    form_class = UpdateForm
-    success_url = reverse_lazy('main_view')
-    # slug_url_kwarg = 'username'
+    form_class = UpdateUserForm
+    slug_url_kwarg = 'username'
+    slug_field = 'username'
     template_name = 'auth/auth/settings.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user'] = CustomUser.objects.filter(id=self.kwargs['pk']).first()
+        context['user'] = self.request.user
+        context['user_blogs'] = Blog.objects.filter(author=self.request.user)
         return context
 
     def form_valid(self, form):
-        user = CustomUser.objects.filter(id=form.id)
-        return super().form_valid(form)
+        self.object = CustomUser.objects.get(username=self.request.user)
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        context = self.get_context_data(object=self.object, form=form)
+
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.save()
+        return redirect('user_update_view', self.object.username)
 
     def form_invalid(self, form):
         return super().form_invalid(form)
@@ -179,6 +207,10 @@ class VerifyView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+
+
+class AddPost(TemplateView):
+    template_name = 'apps/add_post.html'
 
 
 def send_message(context):
