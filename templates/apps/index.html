@@ -38,7 +38,7 @@
                                 </div>
 
                                 <!--Trending Post 1 -->
-                                {% for blog in news %}
+                                {% for blog in trending_post %}
                                     <div class="trending-post">
                                         <div class="trending-post_image">
                                             <div class="rank">1</div>
@@ -48,7 +48,7 @@
 
                                         <div class="trending-post_content">
                                             <a class="card__content-title" href="{% url 'post_view' blog.slug %}">
-                                                <h5>{{ blog.title }}</h5>
+                                                <h5>{{ blog.title|truncatechars:20 }}</h5>
                                             </a>
                                             <!-- Category Header -->
 

@@ -43,8 +43,9 @@
                     <div class="col-12 col-md-6">
                         <div class="contact-us__form">
                             <h3 class="contact-title">LEAVE A MESSAGE</h3>
-                            <form action="{% url 'send_message_admin' user.username %}" method="post">
+                            <form action="{% url 'contact_view' user.username %}" method="post">
                                 {% csrf_token %}
+                                <input type="hidden" name="author_id" value="{{ user.id }}">
                                 <textarea name="message" cols="30" rows="8" placeholder="Message"></textarea>
                                 <button class="btn -normal">Send message</button>
                             </form>
@@ -63,7 +64,7 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
-                        <form class="subcribe-bar__form" action="{% url 'contact_view' %}">
+                        <form class="subcribe-bar__form" action="{% url 'contact_view' user.username %}">
                             {% csrf_token %}
                             <input type="text" placeholder="You email"/>
                             <button class="btn -normal">Subcribe</button>

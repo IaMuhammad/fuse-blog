@@ -1,10 +1,9 @@
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, CharField, PasswordInput
 
-from apps.models import CustomUser, Coment, Blog
+from apps.models import CustomUser, Coment, Blog, Message
 
 
 class RegisterForm(ModelForm):
@@ -38,19 +37,9 @@ class LoginForm(AuthenticationForm):
 
 
 class UpdateUserForm(ModelForm):
-    new_password = CharField(widget=PasswordInput(attrs={"autocomplete": "current-password"}), required=False)
-    re_new_password = CharField(widget=PasswordInput(attrs={"autocomplete": "current-password"}), required=False)
-
-    # def clean_password(self):
-    #     password = self.cleaned_data['password']
-    #     confirm_password = self.data['confirm_password']
-    #     if confirm_password != password:
-    #         raise ValidationError('Parolni takshiring!')
-    #     return make_password(password)
-
     class Meta:
         model = CustomUser
-        fields = ('username', 'first_name', 'last_name', 'phone', 'email', 'description')
+        fields = ('username', 'first_name', 'last_name', 'phone', 'email', 'description', 'photo')
 
     def __int__(self):
         # self.fields['first_name'].required = False
@@ -66,5 +55,17 @@ class UpdateUserForm(ModelForm):
 class BlogForm(ModelForm):
     class Meta:
         model = Blog
+        fields = ('title', 'main_picture', 'category', 'description')
         exclude = ('created_at',)
 
+
+class ComentForm(ModelForm):
+    class Meta:
+        model = Coment
+        exclude = ()
+
+
+class ContactForm(ModelForm):
+    class Meta:
+        model = Message
+        fields = '__all__'

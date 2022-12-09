@@ -1,12 +1,12 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin, register
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse, path
 from django.utils.html import format_html
 
 from apps import models
-from apps.models import Blog, Category, Coment, CustomUser
+from apps.models import Blog, Category, Coment, CustomUser, Message
 
 
 # Register your models here.
@@ -26,10 +26,13 @@ class User(ModelAdmin):
             return obj.last_name
         else:
             return 'null'
+
+
 @register(Blog)
 class Blog(ModelAdmin):
     # change_form_template = "admin/base_site.html"
     list_display = ('title', 'created_at', 'main_picture', 'category_set', 'is_active_icon', 'status_button')
+    list_filter = ('created_at', 'category', 'is_active')
     readonly_fields = ('is_active', 'slug')
     change_form_template = "admin/change_form.html"
 
@@ -95,3 +98,13 @@ class Comment(ModelAdmin):
 class Category(ModelAdmin):
     list_display = ('name',)
     exclude = ('slug',)
+
+
+@admin.register(Message)
+class Message(ModelAdmin):
+    list_display = ('message', 'author', 'written_at')
+    readonly_fields = ('author', 'message',)
+    list_filter = ('written_at',)
+
+    def author(self, obj):
+        return obj.username
