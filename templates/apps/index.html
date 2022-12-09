@@ -18,17 +18,19 @@
                                     <!-- Post category sidebar -->
                                     <h5>Categories</h5>
                                 </div>
-                                {% for category in categories %}
-                                    <a class="category -bar"
-                                       href="{% url 'blog_category_view' category.slug %}">
-                                        <!--Category 1::Background Image size is 340 x 80   -->
-                                        <div class="category__background"
-                                             style="background-image: url({{ category.picture.url }})">
-                                        </div>
-                                        <h5 class="title">{{ category.name }}</h5>
-                                        <h5 class="quantity">{{ category.blog_count }}</h5>
-                                    </a>
-                                {% endfor %}
+                                {% if categories %}
+                                    {% for category in categories %}
+                                        <a class="category -bar"
+                                           href="{% url 'blog_category_view' category.slug %}">
+                                            <!--Category 1::Background Image size is 340 x 80   -->
+                                            <div class="category__background"
+                                                 style="background-image: url({{ category.picture.url }})">
+                                            </div>
+                                            <h5 class="title">{{ category.name }}</h5>
+                                            <h5 class="quantity">{{ category.blog_count }}</h5>
+                                        </a>
+                                    {% endfor %}
+                                {% endif %}
 
                             </div>
                             <!-- Trending Post Side Bar Section-->
@@ -38,6 +40,8 @@
                                 </div>
 
                                 <!--Trending Post 1 -->
+                            {% if trending_post %}
+
                                 {% for blog in trending_post %}
                                     <div class="trending-post">
                                         <div class="trending-post_image">
@@ -57,6 +61,7 @@
                                     </div>
                                 {% endfor %}
                                 <a class="more-btn" href="{% url 'blog_category_view' 'all' %}">Show more </a>
+                            {% endif %}
 
 
                             </div>
@@ -73,6 +78,7 @@
 
                     <div class="col-12 col-md-7 col-lg-8 order-md-1">
                         <div class="row">
+
                             {% for best in bests %}
                                 <div class="col-sm-6 col-md-12">
                                     <div class="post-card -full -center">
@@ -82,7 +88,7 @@
                                         </a>
                                         <div class="card__content">
                                             <!-- Content Category -->
-{#                                            <h5 class="card__content-category">{{ best.category }}</h5>#}
+                                            {#                                            <h5 class="card__content-category">{{ best.category }}</h5>#}
                                             <!-- Content Heading -->
                                             <a class="card__content-title" href="{% url 'post_view' best.slug %}">
                                                 {{ best.title }}
@@ -119,3 +125,7 @@
         </div>
     </div>
 {% endblock content %}
+
+{% comment %}
+scp filename ssh
+{% endcomment %}

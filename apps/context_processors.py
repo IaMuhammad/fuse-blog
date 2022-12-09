@@ -24,11 +24,11 @@ def context_best(request):
 
 def context_trending_posts(request):
     last = datetime.now() - timedelta(days=30)
-    blogs_id = BlogViewing.objects.filter(viewed_at_date__gt=last).values_list('blog_id', 'viewed_at_date').annotate(
-            count=Count('blog_id')).order_by('-count', '-viewed_at_date')[:5]
+    # blogs_id = BlogViewing.objects.filter(viewed_at_date__gt=last).values_list('blog_id', 'viewed_at_date').annotate(
+    #         count=Count('blog_id')).order_by('-count', '-viewed_at_date')[:5]
 
-    blogs = Blog.objects.filter(id__in=[i[0] for i in blogs_id])
+    # blogs = Blog.objects.filter(id__in=[i[0] for i in blogs_id])
     return {
-        'trending_posts' : blogs
-        # 'trending_posts' : ''
+        # 'trending_posts' : blogs
+        'trending_posts' : ''
     }
