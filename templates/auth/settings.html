@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html
         lang="en">
@@ -39,181 +40,178 @@
     <script src="/cache-js/cache-1635427806-97135bbb13d92c11d6b2a92f6a36685a.js" type="text/javascript"></script>
 </head>
 <body>
+
+
 <div id="snippetContent">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
     <section class="section about-section gray-bg" id="about">
+
         <div class="container">
             <form action="{% url 'user_update_view' user.username %}" method="post" enctype="multipart/form-data">
 
 
-            <div class="row align-items-center flex-row-reverse">
-                <div class="col-lg-6">
-                    <div class="about-text go-to">
-                        <h3 class="dark-color">
-                            About Me
-                        </h3>
-                        {% csrf_token %}
-                        <div class="row about-list">
-                            <div class="col-12 col-lg-9">
-                                {#                                <div class="col-10 col-md-9">#}
-                                <div class="media">
-                                    <p>
-                                        <label>
-                                            Username:
-                                        </label>
-                                    </p>
-                                    <input style="width: 300px; margin-left: 20px" type="text" class="form-control"
-                                           id="usr" value="{{ user.username }}" name="username">
+                <div class="row align-items-center flex-row-reverse">
+                    <div class="col-lg-6">
+                        <div class="about-text go-to">
+                            <h3 class="dark-color">
+                                About Me
+                            </h3>
+                            {% csrf_token %}
+                            <div class="row about-list">
+                                <div class="col-12 col-lg-9">
+                                    {#                                <div class="col-10 col-md-9">#}
+                                    <div class="media">
+                                        <p>
+                                            <label>
+                                                Username:
+                                            </label>
+                                        </p>
+                                        <input style="width: 300px; margin-left: 20px" type="text" class="form-control"
+                                               id="usr" value="{{ user.username }}" name="username">
 
-                                </div>
-                                <div class="media">
-                                    <p>
-                                        <label>
-                                            First name:
-                                        </label>
-                                    </p>
-                                    <input style="width: 300px; margin-left: 20px" type="text" class="form-control"
-                                           id="usr" value="{{ user.first_name }}" name="first_name">
-                                </div>
-                                <div class="media">
-                                    <p>
-                                        <label>
-                                            Last name:
-                                        </label>
-                                    </p>
-                                    <input style="width: 300px;margin-left: 20px" type="text" class="form-control"
-                                           id="usr" value="{{ user.last_name }}" name="last_name">
-                                </div>
-                                <div class="media">
-                                    <p>
-                                        <label>
-                                            Birthday:
-                                        </label>
-                                    </p>
-                                    <a style="width: 300px;margin-left: 20px">
-                                        <div class="well">
-                                            <div id="datetimepicker4" class="input-append">
-                                                {#                                                <input value="<?= date({{ user.birthday_date }}) ?>" type="date">#}
-                                                <input value="{{ user.birthday|date:'c' }}" type="date"
-                                                       name="birthday">
-                                                <span class="add-on">
+                                    </div>
+                                    <div class="media">
+                                        <p>
+                                            <label>
+                                                First name:
+                                            </label>
+                                        </p>
+                                        <input style="width: 300px; margin-left: 20px" type="text" class="form-control"
+                                               id="usr" value="{{ user.first_name }}" name="first_name">
+                                    </div>
+                                    <div class="media">
+                                        <p>
+                                            <label>
+                                                Last name:
+                                            </label>
+                                        </p>
+                                        <input style="width: 300px;margin-left: 20px" type="text" class="form-control"
+                                               id="usr" value="{{ user.last_name }}" name="last_name">
+                                    </div>
+                                    <div class="media">
+                                        <p>
+                                            <label>
+                                                Birthday:
+                                            </label>
+                                        </p>
+                                        <a style="width: 300px;margin-left: 20px">
+                                            <div class="well">
+                                                <div id="datetimepicker4" class="input-append">
+                                                    {#                                                <input value="<?= date({{ user.birthday_date }}) ?>" type="date">#}
+                                                    <input value="{{ user.birthday|date:'c' }}" type="date"
+                                                           name="birthday">
+                                                    <span class="add-on">
                                                   <i data-time-icon="icon-time" data-date-icon="icon-calendar">
                                                   </i>
                                                 </span>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                    </a>
+                                        </a>
+                                    </div>
+                                    <div class="media">
+                                        <p>
+                                            <label>
+                                                E-mail:
+                                            </label>
+                                        </p>
+                                        <input style="width: 300px;margin-left: 20px" type="text" class="form-control"
+                                               id="usr" value="{{ user.email }}" name="email" readonly="true">
+                                    </div>
+                                    <div class="media">
+                                        <p>
+                                            <label>
+                                                Phone:
+                                            </label>
+                                        </p>
+                                        <input style="width: 300px;margin-left: 20px" type="number" class="form-control"
+                                               id="usr" value="{{ user.phone }}" name="phone">
+                                        <input style="margin-left: 10px" type="submit" class="btn btn-primary btn-pill" value="Edit">
+
+                                    </div>
                                 </div>
-                                <div class="media">
-                                    <p>
-                                        <label>
-                                            E-mail:
-                                        </label>
-                                    </p>
-                                    <input style="width: 300px;margin-left: 20px" type="text" class="form-control"
-                                           id="usr" value="{{ user.email }}" name="email" readonly="true">
-                                </div>
-                                <div class="media">
-                                    <p>
-                                        <label>
-                                            Phone:
-                                        </label>
-                                    </p>
-                                    <input style="width: 300px;margin-left: 20px" type="number" class="form-control"
-                                           id="usr" value="{{ user.phone }}" name="phone">
-                                </div>
+                                {#                                <div class="col-8 col-md-6">#}
+                                {#                                    <div class="media">#}
+                                {#                                        <p>#}
+                                {#                                            <label>#}
+                                {#                                                Description:#}
+                                {#                                            </label>#}
+                                {#                                            <textarea cols="50" rows="5" size="14"#}
+                                {#                                                      name="description">#}
+                                {#                                                {{ user.description }}#}
+                                {#                                        </textarea>#}
+                                {#                                        </p>#}
+                                {#                                    </div>#}
+                                {#                                </div>#}
                             </div>
-                            <div class="col-8 col-md-6">
 
 
-                                {#                                    <div class="media">#}
-                                {#                                        <p>#}
-                                {#                                            <label>#}
-                                {#                                                Old Password:#}
-                                {#                                            </label>#}
-                                {#                                        </p>#}
-                                {#                                        <input style="width: 300px;margin-left: 20px" type="password" class="form-control"#}
-                                {#                                               id="usr" name="password">#}
-                                {#                                    </div>#}
-                                {#                                    <div class="media">#}
-                                {#                                        <p>#}
-                                {#                                            <label>#}
-                                {#                                                New Password:#}
-                                {#                                            </label>#}
-                                {#                                        </p>#}
-                                {#                                        <input style="width: 300px;margin-left: 20px" type="password" class="form-control"#}
-                                {#                                               id="usr" name="new_password">#}
-                                {#                                    </div>#}
-                                {#                                    <div class="media">#}
-                                {#                                        <p>#}
-                                {#                                            <label>#}
-                                {#                                                Retype New Password:#}
-                                {#                                            </label>#}
-                                {#                                        </p>#}
-                                {#                                        <input style="width: 300px;margin-left: 20px" type="password" class="form-control"#}
-                                {#                                               id="usr" name="re_new_password">#}
-                                {#                                    </div>#}
-                                <div class="media">
-                                    <p>
-                                        <label>
-                                            Description:
-                                        </label>
-                                        <textarea cols="50" rows="5" size="14"
-                                                  name="description">
-                                                {{ user.description }}
-                                        </textarea>
-                                    </p>
-                                </div>
-                                <input type="submit" class="btn btn-primary btn-pill" value="Edit">
+                        </div>
+                    </div>
+                    <div class="col-8 col-lg-6">
+                        <div class="about-avatar">
+                            <img src="{{ user.photo.url }}" title="" alt="">
+                        </div>
+                        <input type="file" value="choose photo" name="photo">
 
-                                </input>
-                            </div>
+                    </div>
+                </div>
+            </form>
+            <form action="{% url 'change_password' %}" method="post">
+                {% csrf_token %}
+                <div class="row about-list">
+                    <div style="margin-left: 570px" class="col-12 col-lg-9">
+                        <div class="media">
+                            <p>
+                                <label>
+                                    Old Password:
+                                </label>
+                            </p>
+                            <input style="width: 300px;margin-left: 20px"
+                                   type="password" class="form-control"
+                                   id="usr" name="password">
+                        </div>
+                        <div class="media">
+                            <p>
+                                <label>
+                                    New Password:
+                                </label>
+                            </p>
+                            <input style="width: 300px;margin-left: 20px" type="password"
+                                   class="form-control"
+                                   id="usr" name="new_password">
+                        </div>
+                        <div class="media">
+                            <p>
+                                <label>
+                                    Retype New Password:
+                                </label>
+                            </p>
+                            <input style="width: 300px;margin-left: 20px" type="password"
+                                   class="form-control"
+                                   id="usr" name="confirm_new_password">
+                            <input style="margin-left: 10px" type="submit" class="btn btn-primary btn-pill"
+                                   value="change">
+
                         </div>
 
-
                     </div>
                 </div>
-                <div class="col-8 col-lg-6">
-                    <div class="about-avatar">
-                        <img src="{{ user.photo.url }}" title="" alt="">
-                    </div>
-                    <input type="file" value="choose photo" name="photo">
+            </form>
 
-                </div>
-            </div>
+
             </form>
 
             <div class="counter">
                 <div class="row">
-                    <div class="col-8 col-lg-4">
+                    <div class="col-14 col-lg-10">
                         <div class="count-data text-center">
                             <h6 class="count h2" data-to="500" data-speed="500">
                                 {{ user.blog_set.count }}
                             </h6>
                             <p class="m-0px font-w-600">
                                 All Blogss
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-8 col-lg-4">
-                        <div class="count-data text-center">
-                            <h6 class="count h2" data-to="150" data-speed="150">
-                                150
-                            </h6>
-                            <p class="m-0px font-w-600">
-                                All Views
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-8 col-lg-4">
-                        <div class="count-data text-center">
-                            <h6 class="count h2" data-to="850" data-speed="850">
-                                850
-                            </h6>
-                            <p class="m-0px font-w-600">
-                                Most View
                             </p>
                         </div>
                     </div>
@@ -240,7 +238,10 @@
                                         <p>{{ user_blog.created_at|date:"M-d-Y" }}</p>
                                     </div>
                                     <div class="info__comment"><i class="far fa-comment"></i>
-                                        <p>{{ user_blog.comment_count }}</p>
+                                        <p>
+                                            Comments: {{ user_blog.comment_count }}
+                                            Views: {{ user_blog.view_count }}
+                                        </p>
                                     </div>
                                 </div>
                             </div>

@@ -1,0 +1,19 @@
+{% extends 'admin/change_form.html' %}
+
+{% block submit_buttons_bottom %}
+    {{ block.super }}
+    <div class="submit-row">
+        <input type="submit" value="view" name="_view">
+        <input type="submit" value="canceled" name="status">
+        <input type="submit" value="active" name="status">
+    </div>
+{% endblock %}
+
+{##}
+{#{% block submit_buttons_bottom %}#}
+{#    {{ block.super }}#}
+{#    <p class="deletelink-box" style="margin-right: 20px">#}
+{#        <input type="submit" style="background-color: #96be5b;" value="active" name="status">#}
+{#    </p>#}
+{#    <input type="submit" value="View Post" name="view">#}
+{#{% endblock %}#}

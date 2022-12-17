@@ -19,6 +19,11 @@ from django.urls import path, include
 
 from root.settings import STATIC_URL, STATIC_ROOT, MEDIA_URL, MEDIA_ROOT
 
+
+admin.site.site_header = 'My project'                    # default: "Django Administration"
+admin.site.index_title = 'Features area'                 # default: "Site administration"
+admin.site.site_title = 'HTML title from adminsitration'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.urls')),

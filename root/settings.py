@@ -36,14 +36,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # my apps
+    'apps.apps.AppsConfig',
+
     # installed apps
-    'django_object_actions',
+    # 'django_object_actions',
     'ckeditor_uploader',
     'ckeditor',
     'fontawesomefree',
-    'fontawesome_5',
-    # my apps
-    'apps.apps.AppsConfig',
+    # 'fontawesome_5',
+    'django_celery_results',
+    'django_crontab',
+
 
 ]
 
@@ -71,10 +75,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'apps.context_processors.context_category',
-                'apps.context_processors.context_blog',
-                'apps.context_processors.context_best',
-                'apps.context_processors.context_trending_posts',
+                'apps.utils.context_processors.context_category',
+                'apps.utils.context_processors.context_blog',
+                'apps.utils.context_processors.context_best',
+                'apps.utils.context_processors.context_trending_posts',
             ],
         },
     },
@@ -87,15 +91,15 @@ WSGI_APPLICATION = 'root.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'blog_db',
-        # 'USER': 'postgres',
-        # 'PASSWORD': '1',
-        # 'HOST': 'localhost',
-        # 'PORT': 5432,
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'blog_db',
+        'USER': 'postgres',
+        'PASSWORD': '1',
+        'HOST': 'localhost',
+        'PORT': 5432,
 
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -103,18 +107,18 @@ DATABASES = {
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    # },
 ]
 
 AUTH_USER_MODEL = 'apps.CustomUser'
@@ -209,3 +213,28 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
+
+# CELERY SETTINGS
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_ACCEPT_CONTEN = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Tashkent'
+
+CELERY_RESULT_BACKEND = 'django-db'
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'muhammedovabubakir03@gmail.com'
+EMAIL_HOST_PASSWORD = 'eeowgnatobtdqggm'
+
+DEFAULT_FROM_EMAIL = 'Celery <muhammedovabubakir03@gmail.com>'
+
+CRONJOBS = [
+    ('0 0 * * *', 'apps.utils.cron.delete_blog')
+]

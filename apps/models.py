@@ -1,18 +1,19 @@
 from datetime import datetime
 
 from ckeditor_uploader.fields import RichTextUploadingField
+from django import template
 from django.contrib.auth.models import AbstractUser
 from django.db.models import Model, SlugField, CharField, ForeignKey, CASCADE, DateField, TextField, ImageField, \
-    SET_NULL, ManyToManyField, SET_DEFAULT, EmailField, TextChoices, DateTimeField, PROTECT
+    SET_NULL, ManyToManyField, SET_DEFAULT, EmailField, TextChoices, DateTimeField, Manager, BooleanField
 from django.utils.html import format_html
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-
+register = template.Library()
 class CustomUser(AbstractUser):
     email = EmailField(max_length=255, unique=True)
     phone = CharField(max_length=255, unique=True, null=True, blank=True)
-    birthday = DateField(auto_now=True)
+    birthday = DateField(auto_now_add=True)
     description = TextField(null=True, blank=True)
     majority = CharField(max_length=255, null=True, blank=True)
     photo = ImageField(default='users/defaultuser.png')
@@ -32,8 +33,8 @@ class CustomUser(AbstractUser):
 
 class Category(Model):
     name = CharField(max_length=255)
-    picture = ImageField(upload_to='%m', null=True, blank=True)
     slug = SlugField(max_length=255, unique=True)
+    picture = ImageField(upload_to='%m', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Kategoriya'
@@ -41,7 +42,7 @@ class Category(Model):
 
     @property
     def blog_count(self):
-        return self.blog_set.filter(is_active=Blog.Active.active).count()
+        return self.blog_set.filter(is_active=Blog.Active.ACTIVE).count()
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -65,37 +66,58 @@ class Category(Model):
         return self.name
 
 
+class ActiveBlogsManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_active=Blog.Active.ACTIVE)
+
+class CancelBlogsManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_active=Blog.Active.CANCEL)
+
 class Blog(Model):
     class Meta:
         verbose_name = 'Blog'
         verbose_name_plural = 'Bloglar'
 
     class Active(TextChoices):  # A subclass of Enum
-        active = 'active', _('active')
-        canceled = 'canceled', _('canceled')
-        pending = 'pending', _('pending')
+        ACTIVE = 'active', _('active')
+        CANCEL = 'cancel', _('cancel')
+        PENDING = 'pending', _('pending')
 
     title = CharField(max_length=255, null=True, blank=True)
     author = ForeignKey('apps.CustomUser', SET_NULL, null=True, blank=True)
-    category = ManyToManyField(Category)
     description = RichTextUploadingField()
     slug = SlugField(max_length=255, unique=True)
     main_picture = ImageField(upload_to='%m', null=True, blank=True)
-    created_at = DateField(auto_now=True)
-    is_active = CharField(max_length=8, choices=Active.choices, default=Active.pending)
+    is_active = CharField(max_length=8, choices=Active.choices, default=Active.PENDING)
+    category = ManyToManyField(Category)
+    created_at = DateTimeField(auto_now_add=True)
+
+    objects = Manager()
+    active = ActiveBlogsManager()
+    cancel = CancelBlogsManager()
+
+    @register.filter
+    def hash(h, key):
+        return h[key]
 
     def status_button(self):
-        if self.is_active == Blog.Active.pending:
+        if self.is_active == Blog.Active.PENDING:
             return format_html(
                 f'''<a href="active/{self.id}" class="button">Active</a>
-                        <a href="canceled/{self.id}" class="button">canceled</a>'''
+                        <a href="cancel/{self.id}" class="button">Cancel</a>'''
             )
-        elif self.is_active == Blog.Active.active:
+        elif self.is_active == Blog.Active.ACTIVE:
             return format_html(
                 f'''<a style="color: green; font-size: 1em;margin-top: 8px; margin: auto;">Tasdiqlangan</a>''')
 
         return format_html(
             f'''<a style="color: red; font-size: 1em;margin-top: 8px; margin: auto;">Tasdiqlanmagan</a>''')
+
+    @property
+    def view_count(self):
+        n = BlogViewing.view_count(self)
+        return n.count()
 
     @property
     def comment_count(self):
@@ -123,29 +145,39 @@ class Blog(Model):
         return self.title
 
 
-class Coment(Model):
-    coment = TextField()
+class Comment(Model):
+    comment = TextField()
     author = ForeignKey('apps.CustomUser', SET_DEFAULT, default=0)
     blog = ForeignKey('apps.Blog', CASCADE, related_name='comment_set')
-    created_at = DateTimeField(auto_now=True)
+    created_at = DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Komentariya'
         verbose_name_plural = 'Komentariyalar'
 
     def __str__(self):
-        return f'{self.author} -> {self.coment[:20]}'
+        return f'{self.author} -> {self.comment[:20]}'
+
 
 class BlogViewing(Model):
     blog = ForeignKey(Blog, CASCADE)
-    viewed_at = DateTimeField(auto_now=True)
-    viewed_at_date = DateField(auto_now=True)
+    viewed_time = DateTimeField(auto_now_add=True)
+    viewed_date = DateField(auto_now_add=True)
+
+    def view_count(blog: Blog):
+        return BlogViewing.objects.filter(blog=blog)
 
     def __str__(self):
-        return f'{self.blog_id}'
+        return f'{self.blog.id}'
 
 
 class Message(Model):
-    author = ForeignKey(CustomUser, on_delete=CASCADE)
+    author = ForeignKey(CustomUser, CASCADE)
     message = TextField()
-    written_at = DateTimeField(auto_now=True)
+    answer = RichTextUploadingField(null=True)
+    status = BooleanField(default=False)
+    written_at = DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Xabar'
+        verbose_name_plural = 'Xabarlar'

@@ -6,7 +6,12 @@ from django.urls import reverse, path
 from django.utils.html import format_html
 
 from apps import models
-from apps.models import Blog, Category, Coment, CustomUser, Message
+from apps.models import Blog, Category, Comment, CustomUser, Message
+from apps.utils.tasks import send_email
+
+admin.site.site_header = "Django Blog Admin"
+admin.site.site_title = "UMSRA Admin Portal"
+admin.site.index_title = "Welcome to Django BLOG Researcher Portal"
 
 
 # Register your models here.
@@ -31,10 +36,11 @@ class User(ModelAdmin):
 @register(Blog)
 class Blog(ModelAdmin):
     # change_form_template = "admin/base_site.html"
-    list_display = ('title', 'created_at', 'main_picture', 'category_set', 'is_active_icon', 'status_button')
+    list_display = ('title', 'created_at', 'blog_pic', 'category_set', 'is_active_icon', 'status_button')
     list_filter = ('created_at', 'category', 'is_active')
+    exclude = ('slug',)
     readonly_fields = ('is_active', 'slug')
-    change_form_template = "admin/change_form.html"
+    change_form_template = "admin/custom/admin_blog.html"
 
     def response_change(self, request, obj):
         if request.POST.get('status'):
@@ -51,19 +57,19 @@ class Blog(ModelAdmin):
         urls = super().get_urls()
         my_url = [
             path('active/<int:id>', self.active),
-            path('canceled/<int:id>', self.canceled),
+            path('cancel/<int:id>', self.canceled),
         ]
         return urls + my_url
 
     def active(self, request, id):
         post = models.Blog.objects.filter(id=id).first()
-        post.is_active = models.Blog.Active.active
+        post.is_active = models.Blog.Active.ACTIVE
         post.save()
         return HttpResponseRedirect('../')
 
     def canceled(self, request, id):
         post = models.Blog.objects.filter(id=id).first()
-        post.is_active = models.Blog.Active.canceled
+        post.is_active = models.Blog.Active.CANCEL
         post.save()
         return HttpResponseRedirect('../')
 
@@ -76,20 +82,24 @@ class Blog(ModelAdmin):
 
         return format_html(', '.join(l))
 
-    def is_active_icon(self, obj):
+    def is_active_icon(self, obj: Blog):
         data = {
             'pending': '<i class="fas fa-circle-notch fa-spin"></i>',
             'active': '<i class="fa-solid fa-check" style="color: green; font-size: 1em;margin-top: 8px; margin: auto;"></i>',
-            'canceled': '<i class="fa-solid fa-circle-xmark"  style="color: red; font-size: 1em;margin-top: 8px; margin: auto;"></i>'
+            'cancel': '<i class="fa-solid fa-circle-xmark"  style="color: red; font-size: 1em;margin-top: 8px; margin: auto;"></i>'
         }
         return format_html(data[obj.is_active])
+
+    def blog_pic(self, obj: Blog):
+        return format_html(
+            f'<img style="border-radius: 5px;" width="100px" height="30px" src="{obj.main_picture.url}"/>')
 
     is_active_icon.short_description = 'status'
 
     Blog.status_button.short_description = 'Chose status'
 
 
-@admin.register(Coment)
+@admin.register(Comment)
 class Comment(ModelAdmin):
     list_display = ('author', 'blog')
 
@@ -103,8 +113,20 @@ class Category(ModelAdmin):
 @admin.register(Message)
 class Message(ModelAdmin):
     list_display = ('message', 'author', 'written_at')
-    readonly_fields = ('author', 'message',)
+    fields = ['author', 'message', 'answer', 'status']
+    readonly_fields = ('author', 'message', 'status')
     list_filter = ('written_at',)
+    change_form_template = "admin/custom/message.html"
+
+
+
+    def response_change(self, request, obj):
+        if request.POST.get('_send'):
+            obj.status = True
+            obj.save()
+            subject = 'Answer to your message FROM FUSE company'
+            send_email.apply_async(args=[obj.author.email, obj.answer, subject], countdown=5)
+        return super().response_change(request, obj)
 
     def author(self, obj):
         return obj.username

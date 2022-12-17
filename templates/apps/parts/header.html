@@ -55,11 +55,13 @@
                     <a class="btn btn-outline-primary" href="{% url 'register_view' %}">Sign up</a>
                     <a class="btn btn-outline-primary" href="{% url 'login_view' %}">Log in</a>
                 {% else %}
-
                     <a class="btn btn-outline-primary" href="{% url 'user_update_view' user.username %}">Settings</a>
                     <a class="btn btn-outline-primary" href="{% url 'logout_view' %}">Log Out</a>
                 {% endif %}
 
+                {% if '/blog/' == request.path|slice:6 %}
+                    <a class="btn btn-outline-primary" href="{% url 'make_pdf' blog.slug %}">Make PDF</a>
+                {% endif %}
             </div>
 
         </div>

@@ -1,15 +1,25 @@
-from datetime import datetime, timedelta
-
-from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.db.models import Count
+from django.contrib.sites.shortcuts import get_current_site
+from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from django.views import View
 from django.views.generic import TemplateView, ListView, CreateView, DetailView, UpdateView, FormView
 
-from apps.forms import RegisterForm, LoginForm, BlogForm, UpdateUserForm, ContactForm, ComentForm
-from apps.models import Blog, Category, CustomUser, Coment, Message, BlogViewing
+from apps.forms import RegisterForm, LoginForm, BlogForm, UpdateUserForm, ContactForm, CommentForm, ForgotPasswordForm, \
+    ChangePasswordForm
+from apps.models import Blog, Category, CustomUser, Comment, Message, BlogViewing
+from apps.utils.make_pdf import render_to_pdf
+from apps.utils.tasks import send_to_gmail
+# from apps.utils import senf_mail_func
+# from apps.utils.tasks import test_func
+from apps.utils.token import account_activation_token
 
 
 class LoginMixin:
@@ -17,6 +27,16 @@ class LoginMixin:
         if request.user.is_authenticated:
             return redirect('main_view')
         return super().get(request, *args, **kwargs)
+
+
+class GeneratePdf(View):
+    def get(self, request, *args, **kwargs):
+        blog = Blog.objects.filter(slug=kwargs.get('slug')).first()
+        data = {
+            'blog': blog,
+        }
+        pdf = render_to_pdf('apps/make_pdf.html', data)
+        return HttpResponse(pdf, content_type='application/pdf')
 
 
 # Create your views here.
@@ -47,7 +67,7 @@ class ContactPageVIew(CreateView):
 
 class BlogListView(ListView):
     template_name = 'apps/blog-category.html'
-    paginate_by = 2
+    paginate_by = 4
     model = Blog
 
     # queryset = Category.objects.order_by('name')
@@ -55,12 +75,8 @@ class BlogListView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
-        last = datetime.now() - timedelta(days=30)
-        blogs_id = BlogViewing.objects.filter(viewed_at_date__gt=last).values_list('blog_id', 'viewed_at_date').annotate(
-        count=Count('blog_id')).order_by('count', 'viewed_at_date')[:5]
 
-        blogs = Blog.objects.filter(id__in=[i[0] for i in blogs_id])
-        context['news'] = blogs
+        context['news'] = Blog.active.all()
         context['categories_list'] = Category.objects.all()
         context['categories'] = Category.objects.order_by('name')
         s = self.request.path.split('/')[-1]
@@ -69,7 +85,7 @@ class BlogListView(ListView):
         if obj:
             context['path'] = obj.name
             if obj.name != 'all':
-                context['blogs'] = Blog.objects.filter(category__id=obj.id)
+                context['blogs'] = Blog.active.filter(category__id=obj.id)
 
         elif s != 'all':
             context['blogs'] = None
@@ -78,7 +94,7 @@ class BlogListView(ListView):
 
 
 class BlogPageView(FormView, DetailView):
-    form_class = ComentForm
+    form_class = CommentForm
     queryset = Blog.objects.all()
     template_name = 'apps/post.html'
 
@@ -91,7 +107,7 @@ class BlogPageView(FormView, DetailView):
         context = super().get_context_data(**kwargs)
         context['blog'] = Blog.objects.filter(slug=self.request.path.split('/')[-1]).first()
         context['blog_category'] = context['blog'].category.all()
-        context['commentaries'] = Coment.objects.filter(blog_id=context['blog'].id)
+        context['commentaries'] = Comment.objects.filter(blog_id=context['blog'].id)
         return context
 
     # def get_queryset(self):
@@ -107,7 +123,7 @@ class BlogPageView(FormView, DetailView):
             'coment': request.POST.get('message')
         }
         form = self.form_class(data)
-        if form.is_valid:
+        if form.is_valid():
             form.save()
 
         # blog =
@@ -173,26 +189,62 @@ class BLogUpdateView(UpdateView, LoginRequiredMixin):
 
 class RegisterPageView(LoginMixin, CreateView):
     form_class = RegisterForm
-    template_name = 'auth/auth/register.html'
+    template_name = 'auth/register.html'
     success_url = reverse_lazy('main_view')
 
     def form_valid(self, form):
-        form.instance.is_active = False
-        con = {'username': form.data['username'],
-               'email': form.data['email']}
         user = form.save()
-        code = send_message(con)
-        if user is not None:
-            login(self.request, user)
+        if user:
+            user = authenticate(username=user.username, password=user.password)
+            if user:
+                login(self.request, user)
+        current_site = get_current_site(self.request)
+        send_to_gmail.apply_async(args=[form.data.get('email'), current_site.domain, 'activate'])
         return super().form_valid(form)
+
+    # def form_valid(self, form):
+    #     form.instance.is_active = False
+    #     con = {'username': form.data['username'],
+    #            'email': form.data['email']}
+    #     user = form.save()
+    #     code = send_message(con)
+    #     if user is not None:
+    #         login(self.request, user)
+    #     return super().form_valid(form)
 
     def form_invalid(self, form):
         return super().form_invalid(form)
 
 
+class ActivateEmailView(TemplateView):
+    template_name = 'auth/confirm-mail.html'
+
+    def get(self, request, *args, **kwargs):
+        uid = kwargs.get('uid')
+        token = kwargs.get('token')
+
+        try:
+            uid = force_str(urlsafe_base64_decode(uid))
+            user = CustomUser.objects.get(pk=uid)
+        except Exception as e:
+            user = None
+        if user is not None and account_activation_token.check_token(user, token):
+            user.is_active = True
+            user.save()
+            login(request, user)
+            messages.add_message(
+                request=request,
+                level=messages.SUCCESS,
+                message="Your account successfully activated!"
+            )
+            return redirect('main_view')
+        else:
+            return HttpResponse('Activation link is invalid!')
+
+
 class LoginPageView(LoginMixin, LoginView):
     form_class = LoginForm
-    template_name = 'auth/auth/login.html'
+    template_name = 'auth/login.html'
     next_page = reverse_lazy('main_view')
 
     # def get(self, request, *args, **kwargs):
@@ -217,12 +269,12 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     form_class = UpdateUserForm
     slug_url_kwarg = 'username'
     slug_field = 'username'
-    template_name = 'auth/auth/settings.html'
+    template_name = 'auth/settings.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['user'] = self.request.user
-        context['user_blogs'] = Blog.objects.filter(author=self.request.user)
+        context['user_blogs'] = Blog.objects.filter(author=self.request.user).order_by('-created_at')
         return context
 
     def form_valid(self, form):
@@ -237,8 +289,21 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         return redirect('user_update_view', self.object.username)
 
 
+class ChangePasswordView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        username = request.user.username
+        user = request.user
+        form = ChangePasswordForm(request.POST, initial={'request': request})
+        if form.is_valid():
+            form.save(request.user)
+            password = form.data.get('new_password')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+        return redirect('user_update_view', user.username)
+
+
 class VerifyView(TemplateView):
-    template_name = 'auth/auth/verify.html'
+    template_name = 'auth/verify.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -248,34 +313,40 @@ class VerifyView(TemplateView):
         return super().get(request, *args, **kwargs)
 
 
-def send_message(context):
-    import smtplib
-    import ssl
-    from email.message import EmailMessage
+class ForgotPasswordView(FormView):
+    template_name = 'auth/forgot_password.html'
+    form_class = ForgotPasswordForm
+    success_url = reverse_lazy('login_view')
 
-    email_receiver = context['email']
-    username = context['username']
+    def form_valid(self, form):
+        current_site = get_current_site(self.request)
+        send_to_gmail.apply_async(args=[form.data.get('email'), current_site.domain, 'reset'])
+        return super().form_valid(form)
 
-    email_sender = 'muhammedovabubakir03@gmail.com'
-    email_password = 'eeowgnatobtdqggm'
-    email_receiver = context['email']
-    username = context['username']
-    subject = 'YOUR VERIFICATION CODE'
-    body = f"""
-                    Hello {username}!!!
-                You registered an account on {0000}, before being able to use your account you need to verify that this is.
-                Type this code to field that under this message  
 
-                Abu Bakir Muhammedov!
-                """
-    em = EmailMessage()
-    em['From'] = email_sender
-    em['To'] = email_receiver
-    em['Subject'] = subject
-    em.set_content(body)
+class ResetPasswordView(TemplateView):
+    template_name = 'auth/reset_password.html'
 
-    context = ssl.create_default_context()
+    def get_user(self, uid, token):
+        uid = force_str(urlsafe_base64_decode(uid))
+        user = CustomUser.objects.get(id=uid)
+        return user, user and account_activation_token.check_token(user, token)
 
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-        smtp.login(email_sender, email_password)
-        smtp.sendmail(email_sender, email_receiver, em.as_string())
+    def get(self, request, *args, **kwargs):
+        user, is_valid = self.get_user(**kwargs)
+        if not is_valid:
+            return HttpResponse('Link not found')
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        user, is_valid = self.get_user(**kwargs)
+        if is_valid:
+            form = SetPasswordForm(user, request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('login_view')
+        return HttpResponse('Link not found')
+
+
+class ConfirmPasswordView(TemplateView):
+    template_name = 'auth/confirm_password.html'
