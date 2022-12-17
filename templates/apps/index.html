@@ -41,27 +41,27 @@
 
                                 <!--Trending Post 1 -->
 
-                                {% for blog in trending_posts %}
-                                    <div class="trending-post">
-                                        <div class="trending-post_image">
-                                            <div class="rank">
-                                                 {{ forloop.counter }}
-                                            </div>
-                                            <!--Img size is 100 x 100 -->
+{#                                {% for blog in trending_posts %}#}
+{#                                    <div class="trending-post">#}
+{#                                        <div class="trending-post_image">#}
+{#                                            <div class="rank">#}
+{#                                                 {{ forloop.counter }}#}
+{#                                            </div>#}
+{#                                            <!--Img size is 100 x 100 -->#}
 {#                                            <img src="{% url blog.blog__main_picture %}"/>#}
-                                        </div>
-
-
-                                        <div class="trending-post_content">
-                                            <a class="card__content-title" href="{% url 'post_view' blog.blog__slug %}">
-                                                <h5>{{ blog.blog__title|truncatechars:20 }}</h5>
-                                            </a>
-                                            <!-- Category Header -->
-
-                                            <a href="{% url 'post_view' blog.blog__slug %}">{{ blog.blog__description|striptags|truncatechars:50|safe }}</a>
-                                        </div>
-                                    </div>
-                                {% endfor %}
+{#                                        </div>#}
+{##}
+{##}
+{#                                        <div class="trending-post_content">#}
+{#                                            <a class="card__content-title" href="{% url 'post_view' blog.blog__slug %}">#}
+{#                                                <h5>{{ blog.blog__title|truncatechars:20 }}</h5>#}
+{#                                            </a>#}
+{#                                            <!-- Category Header -->#}
+{##}
+{#                                            <a href="{% url 'post_view' blog.blog__slug %}">{{ blog.blog__description|striptags|truncatechars:50|safe }}</a>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                {% endfor %}#}
                                 <a class="more-btn" href="{% url 'blog_category_view' 'all' %}">Show more </a>
 
 

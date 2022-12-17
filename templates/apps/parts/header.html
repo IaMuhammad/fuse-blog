@@ -30,12 +30,12 @@
                     <li class="nav-item {% if request.path == '/about' %}active{% endif %}"><a
                             href="{% url 'about_view' %}">About</a></li>
                     {% if not user.is_anonymous %}
-                        <li class="nav-item {% if request.path == '/contact' %}active{% endif %}"><a
+                        <li class="nav-item {% if '/contact/' in request.path %}active{% endif %}"><a
                                 href="{% url 'contact_view' user.username %}">Contact</a></li>
                     {% endif %}
 
                     {% if not user.is_anonymous %}
-                        <li class="nav-item {% if request.path == '/contact' %}active{% endif %}"><a
+                        <li class="nav-item {% if request.path == '/add_blog' %}active{% endif %}"><a
                                 href="{% url 'add_blog_view' %}">Add Post</a></li>
                     {% endif %}
                 </ul>

@@ -162,7 +162,6 @@ class Comment(Model):
 class BlogViewing(Model):
     blog = ForeignKey(Blog, CASCADE)
     viewed_time = DateTimeField(auto_now_add=True)
-    viewed_date = DateField(auto_now_add=True)
 
     def view_count(blog: Blog):
         return BlogViewing.objects.filter(blog=blog)

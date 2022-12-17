@@ -70,6 +70,7 @@ class BlogListView(ListView):
     paginate_by = 4
     model = Blog
 
+
     # queryset = Category.objects.order_by('name')
     # context_object_name = 'categories'
 
