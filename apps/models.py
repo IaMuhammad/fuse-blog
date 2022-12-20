@@ -16,11 +16,12 @@ class CustomUser(AbstractUser):
     birthday = DateField(auto_now_add=True)
     description = TextField(null=True, blank=True)
     majority = CharField(max_length=255, null=True, blank=True)
-    photo = ImageField(default='users/defaultuser.png')
+    photo = ImageField(default='users/desfaultuser.png')
+    is_active = BooleanField(default=False)
 
-    # class Meta:
-    #     verbose_name = 'Foydalanuvchi'
-    #     verbose_name_plural = 'Foydalanuvchilar'
+#     # class Meta:
+#     #     verbose_name = 'Foydalanuvchi'
+#     #     verbose_name_plural = 'Foydalanuvchilar'
 
     @property
     def years_old(self):
@@ -36,9 +37,9 @@ class Category(Model):
     slug = SlugField(max_length=255, unique=True)
     picture = ImageField(upload_to='%m', null=True, blank=True)
 
-    class Meta:
-        verbose_name = 'Kategoriya'
-        verbose_name_plural = 'Kategoriyalar'
+    # class Meta:
+    #     verbose_name = 'Kategoriya'
+    #     verbose_name_plural = 'Kategoriyalar'
 
     @property
     def blog_count(self):
@@ -59,7 +60,6 @@ class Category(Model):
                         self.slug = slug + '-1'
                 else:
                     self.slug += '-1'
-
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -68,16 +68,16 @@ class Category(Model):
 
 class ActiveBlogsManager(Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(is_active=Blog.Active.ACTIVE)
+        return super().get_queryset().filter(is_active=Blog.Active.ACTIVE).order_by('created_at')
 
 class CancelBlogsManager(Manager):
     def get_queryset(self):
         return super().get_queryset().filter(is_active=Blog.Active.CANCEL)
 
 class Blog(Model):
-    class Meta:
-        verbose_name = 'Blog'
-        verbose_name_plural = 'Bloglar'
+    # class Meta:
+    #     verbose_name = 'Blog'
+    #     verbose_name_plural = 'Bloglar'
 
     class Active(TextChoices):  # A subclass of Enum
         ACTIVE = 'active', _('active')
@@ -151,9 +151,9 @@ class Comment(Model):
     blog = ForeignKey('apps.Blog', CASCADE, related_name='comment_set')
     created_at = DateTimeField(auto_now_add=True)
 
-    class Meta:
-        verbose_name = 'Komentariya'
-        verbose_name_plural = 'Komentariyalar'
+    # class Meta:
+    #     verbose_name = 'Komentariya'
+    #     verbose_name_plural = 'Komentariyalar'
 
     def __str__(self):
         return f'{self.author} -> {self.comment[:20]}'
@@ -177,6 +177,6 @@ class Message(Model):
     status = BooleanField(default=False)
     written_at = DateTimeField(auto_now_add=True)
 
-    class Meta:
-        verbose_name = 'Xabar'
-        verbose_name_plural = 'Xabarlar'
+    # class Meta:
+    #     verbose_name = 'Xabar'
+    #     verbose_name_plural = 'Xabarlar'

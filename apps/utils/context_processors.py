@@ -7,13 +7,13 @@ from apps.models import Category, Blog, BlogViewing
 
 def context_category(request):
     return {
-        'categories': Category.objects.all()
+        'categories': Category.objects.order_by('name')
     }
 
 
 def context_blog(request):
     return {
-        'blogs': Blog.active.order_by('-created_at')
+        # 'blogs': Blog.active.order_by('-created_at')
     }
 
 

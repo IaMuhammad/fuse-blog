@@ -20,6 +20,8 @@
                                 </div>
                                 {% if categories %}
                                     {% for category in categories %}
+                                        {% if category.blog_count > 0 %}
+
                                         <a class="category -bar"
                                            href="{% url 'blog_category_view' category.slug %}">
                                             <!--Category 1::Background Image size is 340 x 80   -->
@@ -29,6 +31,8 @@
                                             <h5 class="title">{{ category.name }}</h5>
                                             <h5 class="quantity">{{ category.blog_count }}</h5>
                                         </a>
+                                                                                {% endif %}
+
                                     {% endfor %}
                                 {% endif %}
 

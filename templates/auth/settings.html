@@ -48,9 +48,8 @@
     <section class="section about-section gray-bg" id="about">
 
         <div class="container">
-            <form action="{% url 'user_update_view' user.username %}" method="post" enctype="multipart/form-data">
-
-
+            <form action="{% url 'user_update_view' user.username %}" method="{% if editable %}post{% endif %} "
+                  enctype="multipart/form-data">
                 <div class="row align-items-center flex-row-reverse">
                     <div class="col-lg-6">
                         <div class="about-text go-to">
@@ -68,7 +67,8 @@
                                             </label>
                                         </p>
                                         <input style="width: 300px; margin-left: 20px" type="text" class="form-control"
-                                               id="usr" value="{{ user.username }}" name="username">
+                                               id="usr" value="{{ edit_user.username }}" name="username"
+                                               {% if not editable %}readonly{% endif %}>
 
                                     </div>
                                     <div class="media">
@@ -78,7 +78,8 @@
                                             </label>
                                         </p>
                                         <input style="width: 300px; margin-left: 20px" type="text" class="form-control"
-                                               id="usr" value="{{ user.first_name }}" name="first_name">
+                                               id="usr" value="{{ edit_user.first_name }}" name="first_name"
+                                               {% if not editable %}readonly{% endif %}>
                                     </div>
                                     <div class="media">
                                         <p>
@@ -87,7 +88,8 @@
                                             </label>
                                         </p>
                                         <input style="width: 300px;margin-left: 20px" type="text" class="form-control"
-                                               id="usr" value="{{ user.last_name }}" name="last_name">
+                                               id="usr" value="{{ edit_user.last_name }}" name="last_name"
+                                               {% if not editable %}readonly{% endif %}>
                                     </div>
                                     <div class="media">
                                         <p>
@@ -99,8 +101,8 @@
                                             <div class="well">
                                                 <div id="datetimepicker4" class="input-append">
                                                     {#                                                <input value="<?= date({{ user.birthday_date }}) ?>" type="date">#}
-                                                    <input value="{{ user.birthday|date:'c' }}" type="date"
-                                                           name="birthday">
+                                                    <input value="{{ edit_user.birthday|date:'c' }}" type="date"
+                                                           name="birthday" {% if not editable %}readonly{% endif %}>
                                                     <span class="add-on">
                                                   <i data-time-icon="icon-time" data-date-icon="icon-calendar">
                                                   </i>
@@ -117,7 +119,7 @@
                                             </label>
                                         </p>
                                         <input style="width: 300px;margin-left: 20px" type="text" class="form-control"
-                                               id="usr" value="{{ user.email }}" name="email" readonly="true">
+                                               id="usr" value="{{ edit_user.email }}" name="email" readonly="true">
                                     </div>
                                     <div class="media">
                                         <p>
@@ -126,8 +128,13 @@
                                             </label>
                                         </p>
                                         <input style="width: 300px;margin-left: 20px" type="number" class="form-control"
-                                               id="usr" value="{{ user.phone }}" name="phone">
-                                        <input style="margin-left: 10px" type="submit" class="btn btn-primary btn-pill" value="Edit">
+                                               id="usr" value="{{ edit_user.phone }}" name="phone"
+                                               {% if not editable %}readonly{% endif %}>
+                                        {% if editable %}
+                                            <input style="margin-left: 10px" type="submit"
+                                                   class="btn btn-primary btn-pill" value="Edit">
+
+                                        {% endif %}
 
                                     </div>
                                 </div>
@@ -151,64 +158,69 @@
                     </div>
                     <div class="col-8 col-lg-6">
                         <div class="about-avatar">
-                            <img src="{{ user.photo.url }}" title="" alt="">
+                            <img src="{{ edit_user.photo.url }}" title="" alt="">
                         </div>
-                        <input type="file" value="choose photo" name="photo">
+                        {% if editable %}
+                            <input type="file" value="choose photo" name="photo">
+                        {% endif %}
 
                     </div>
                 </div>
             </form>
-            <form action="{% url 'change_password' %}" method="post">
-                {% csrf_token %}
-                <div class="row about-list">
-                    <div style="margin-left: 570px" class="col-12 col-lg-9">
-                        <div class="media">
-                            <p>
-                                <label>
-                                    Old Password:
-                                </label>
-                            </p>
-                            <input style="width: 300px;margin-left: 20px"
-                                   type="password" class="form-control"
-                                   id="usr" name="password">
-                        </div>
-                        <div class="media">
-                            <p>
-                                <label>
-                                    New Password:
-                                </label>
-                            </p>
-                            <input style="width: 300px;margin-left: 20px" type="password"
-                                   class="form-control"
-                                   id="usr" name="new_password">
-                        </div>
-                        <div class="media">
-                            <p>
-                                <label>
-                                    Retype New Password:
-                                </label>
-                            </p>
-                            <input style="width: 300px;margin-left: 20px" type="password"
-                                   class="form-control"
-                                   id="usr" name="confirm_new_password">
-                            <input style="margin-left: 10px" type="submit" class="btn btn-primary btn-pill"
-                                   value="change">
+            {% if editable %}
+                <form action="{% url 'change_password' %}" method="post">
+                    {% csrf_token %}
+                    <div class="row about-list">
+                        <div style="margin-left: 570px" class="col-12 col-lg-9">
+                            <div class="media">
+                                <p>
+                                    <label>
+                                        Old Password:
+                                    </label>
+                                </p>
+                                <input style="width: 300px;margin-left: 20px"
+                                       type="password" class="form-control"
+                                       id="usr" name="password">
+                            </div>
+                            <div class="media">
+                                <p>
+                                    <label>
+                                        New Password:
+                                    </label>
+                                </p>
+                                <input style="width: 300px;margin-left: 20px" type="password"
+                                       class="form-control"
+                                       id="usr" name="new_password">
+                            </div>
+                            <div class="media">
+                                <p>
+                                    <label>
+                                        Retype New Password:
+                                    </label>
+                                </p>
+                                <input style="width: 300px;margin-left: 20px" type="password"
+                                       class="form-control"
+                                       id="usr" name="confirm_new_password">
+                                {% if editable %}
+                                    <input style="margin-left: 10px" type="submit" class="btn btn-primary btn-pill"
+                                           value="change">
+
+                                {% endif %}
+
+                            </div>
 
                         </div>
-
                     </div>
-                </div>
-            </form>
+                </form>
 
-
-            </form>
+            {% endif %}
 
             <div class="counter">
                 <div class="row">
                     <div class="col-14 col-lg-10">
                         <div class="count-data text-center">
                             <h6 class="count h2" data-to="500" data-speed="500">
-                                {{ user.blog_set.count }}
+                                {{ edit_user.blog_set.count }}
                             </h6>
                             <p class="m-0px font-w-600">
                                 All Blogss

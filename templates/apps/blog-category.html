@@ -24,16 +24,19 @@
                                     <!-- Blog category sidebar -->
                                     <h5>Categories</h5>
                                 </div>
-                                {% for category in categories_list %}
-                                    <a class="category -barcategory -bar "
-                                       href="{% url 'blog_category_view' category.slug %}">
-                                        <!--Category 1::Background Image size is 340 x 80   -->
-                                        <div class="category__background"
-                                             style="background-image: url({{ category.picture.url }})">
-                                        </div>
-                                        <h5 class="title">{{ category.name }}</h5>
-                                        <h5 class="quantity">{{ category.blog_count }}</h5>
-                                    </a>
+                                {% for category in categories %}
+                                    {% if category.blog_count > 0 %}
+                                        <a class="category -barcategory -bar "
+                                           href="{% url 'blog_category_view' category.slug %}">
+                                            <!--Category 1::Background Image size is 340 x 80   -->
+                                            <div class="category__background"
+                                                 style="background-image: url({{ category.picture.url }})">
+                                            </div>
+                                            <h5 class="title">{{ category.name }}</h5>
+                                            <h5 class="quantity">{{ category.blog_count }}</h5>
+                                        </a>
+
+                                    {% endif %}
                                 {% endfor %}
 
                             </div>

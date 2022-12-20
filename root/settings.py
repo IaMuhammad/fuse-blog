@@ -97,9 +97,6 @@ DATABASES = {
         'PASSWORD': '1',
         'HOST': 'localhost',
         'PORT': 5432,
-
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -216,24 +213,25 @@ CKEDITOR_CONFIGS = {
 
 # CELERY SETTINGS
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_TIMEZONE = 'Asia/Tashkent'
 CELERY_ACCEPT_CONTEN = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Asia/Tashkent'
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 
 CELERY_RESULT_BACKEND = 'django-db'
 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'muhammedovabubakir03@gmail.com'
-EMAIL_HOST_PASSWORD = 'eeowgnatobtdqggm'
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'djangoemail.fuse@gmail.com'
+EMAIL_HOST_PASSWORD = 'deujmvbkymobzcmk'
 
-DEFAULT_FROM_EMAIL = 'Celery <muhammedovabubakir03@gmail.com>'
+DEFAULT_FROM_EMAIL = 'Celery <djangoemail.fuse@gmail.com>'
 
 CRONJOBS = [
     ('0 0 * * *', 'apps.utils.cron.delete_blog')

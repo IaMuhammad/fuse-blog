@@ -23,15 +23,7 @@ def send_email(email, message, subject):
 def send_to_gmail(email, domain, _type):
     from_email = EMAIL_HOST_USER
     user = CustomUser.objects.filter(email=email).first()
-    recipient_list = [email]
     template = 'auth/activation-account.html'
-    message = render_to_string(template, {
-        'user': user,
-        'domain': domain,
-        'uid': urlsafe_base64_encode(force_bytes(str(user.pk))),
-        'token': account_activation_token.make_token(user),
-        'type': _type
-    })
     if _type == 'activate':
         subject = 'Activate your account'
     elif _type == 'reset':
@@ -39,6 +31,15 @@ def send_to_gmail(email, domain, _type):
         subject = 'Reset your password'
     else:
         raise ValueError
+
+    message = render_to_string(template, {
+        'user': user,
+        'domain': domain,
+        'uid': urlsafe_base64_encode(force_bytes(str(user.pk))),
+        'token': account_activation_token.make_token(user),
+        'type': _type
+    })
+    recipient_list = [email]
     email = EmailMessage(subject, message, from_email, recipient_list)
     email.content_subtype = 'html'
     result = email.send()

@@ -104,7 +104,7 @@ class ChangePasswordForm(Form):
         return super().clean()
 
     def clean_password(self):
-        user = self.initial['request'].user
+        user = self.inictial['request'].user
         password = self.cleaned_data.get('password')
         if not user.check_password(password):
             raise ValidationError('Eski parol xato')

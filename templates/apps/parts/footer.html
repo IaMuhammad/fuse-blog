@@ -31,7 +31,7 @@
                                              alt="Best Open Source Tools For Developers"/>
                                     </a>
                                     <div class="card__content">
-                                           <h5 class="card__content-category">{{ blog.title }}</h5>
+                                        <h5 class="card__content-category">{{ blog.title }}</h5>
                                         <a class="card__content-title" href="{% url 'post_view' foot.slug %}">
                                             {{ foot.description|truncatechars:50|safe }}
                                         </a>
@@ -58,7 +58,11 @@
                                 </div>
                                 <div class="categories-group">
                                     {% for category in categories %}
-                                        <a class="tag-btn" href="{% url 'blog_category_view'  category.slug%}">{{ category.name }}</a>
+                                        {% if category.blog_count > 0 %}
+                                            <a class="tag-btn"
+                                               href="{% url 'blog_category_view'  category.slug %}">{{ category.name }}</a>
+
+                                        {% endif %}
                                     {% endfor %}
 
                                 </div>
