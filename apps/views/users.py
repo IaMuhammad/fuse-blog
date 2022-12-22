@@ -38,7 +38,6 @@ class RegisterPageView(LoginMixin, CreateView):
     success_url = reverse_lazy('main_view')
 
     def form_valid(self, form):
-
         user = form.save()
         if user:
             user = authenticate(username=user.username, password=user.password)

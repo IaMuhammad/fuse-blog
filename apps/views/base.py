@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -10,14 +11,22 @@ from apps.models import Blog, Category, Comment, BlogViewing, Message
 from apps.utils.make_pdf import render_to_pdf
 
 
-class GeneratePdf(View):
+class GeneratePdf(DetailView):
+    template_name = 'apps/make_pdf.html'
     def get(self, request, *args, **kwargs):
         blog = Blog.objects.filter(slug=kwargs.get('slug')).first()
         data = {
             'blog': blog,
+        'current_url': f'http://{get_current_site(self.request)}/pdf/{blog.slug}'
+
         }
         pdf = render_to_pdf('apps/make_pdf.html', data)
         return HttpResponse(pdf, content_type='application/pdf')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        return context
 
 
 class MainPageView(ListView):

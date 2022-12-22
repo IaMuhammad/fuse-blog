@@ -47,6 +47,12 @@
 <div class='wrapper'>
     <div class='header'>
         <p class='title'> {{ blog.title|safe }} </p>
+        <img id='barcode'
+            src="https://api.qrserver.com/v1/create-qr-code/?data={{ current_url }}&amp;size=100x100"
+            alt=""
+            title="HELLO"
+            width="50"
+            height="50" />
     </div>
     <div>
         {{ blog.description|safe }}
