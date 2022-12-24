@@ -195,21 +195,27 @@
                                             </div>
                                         {% endif %}
                                         <!-- comment Form -->
-                                        <h3 class="comment-title"><span>Leave a comment</span></h3>
-                                        <div class="post-footer__comment__form">
-                                            <form action="{% url 'post_view' blog.slug %}" method="post">
-                                                {% csrf_token %}
-                                                <div class="row">
+                                        {% if user.is_authenticated %}
+
+                                            <h3 class="comment-title"><span>Leave a comment</span></h3>
+                                            <div class="post-footer__comment__form">
+                                                <form action="{% url 'post_view' blog.slug %}" method="post">
+                                                    {% csrf_token %}
+
+
+                                                    <div class="row">
                                                 <textarea cols="30" rows="5" placeholder="Messages"
                                                           name="message"></textarea>
-                                                </div>
-                                                <div class="center">
-                                                    <input type="hidden">
-                                                    <button type="submit" class="btn btn-outline-primary">Submit
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
+                                                    </div>
+                                                    <div class="center">
+                                                        <input type="hidden">
+                                                        <button type="submit" class="btn btn-outline-primary">Submit
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        {% endif %}
+
                                     </div>
                                 </div>
                             </div>

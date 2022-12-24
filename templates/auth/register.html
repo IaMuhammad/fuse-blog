@@ -14,18 +14,34 @@
                 <h2 class="form-title">Sign up</h2>
                 <form method="POST" action="{% url 'register_view' %}" class="register-form" id="register-form">
                     {% csrf_token %}
+
+
                     <div class="form-group">
                         <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                        <input type="text" name="username" id="username" placeholder="Username"/>
+                        <input type="text" name="username" id="username" placeholder="Username"
+                               {% if errors.username %}value="{{ request.POST.username }}" {% endif %}/>
                     </div>
+                    {% if errors.username %}
+                        <a style="color: red">{{ errors.username }}</a>
+                    {% endif %}
+
                     <div class="form-group">
                         <label for="email"><i class="zmdi zmdi-email"></i></label>
-                        <input type="email" name="email" id="email" placeholder="Your Email"/>
+                        <input type="email" name="email" id="email" placeholder="Your Email"
+                               {% if errors.email %}value="{{ request.POST.email }}" {% endif %}/>
                     </div>
+                    {% if errors.email %}
+                        <a style="color: red">{{ errors.email }}</a>
+                    {% endif %}
                     <div class="form-group">
                         <label for="phone"><i class="zmdi zmdi-phone"></i></label>
-                        <input type="tel" name="phone" id="phone" placeholder="(99) 123-45-67"/>
+                        <input type="tel" name="phone" id="phone" placeholder="(99) 123-45-67"
+                               {% if errors.phone %}value="{{ request.POST.phone }}{% endif %}"/>
                     </div>
+
+                    {% if errors.phone %}
+                        <a style="color: red">{{ errors.phone }}</a>
+                    {% endif %}
                     <div class="form-group">
                         <label for="pass"><i class="zmdi zmdi-lock"></i></label>
                         <input type="password" name="password" id="pass" placeholder="Password"/>
@@ -35,6 +51,9 @@
                         <input type="password" name="confirm_password" id="re_pass"
                                placeholder="Repeat your password"/>
                     </div>
+                    {% if errors.password %}
+                        <a style="color: red">{{ errors.password }}</a>
+                    {% endif %}
                     <div class="form-group">
                         <input type="checkbox" name="agree-term" id="agree-term" class="agree-term"/>
                         <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all

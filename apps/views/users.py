@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -47,6 +47,12 @@ class RegisterPageView(LoginMixin, CreateView):
         send_to_gmail.apply_async(args=[form.data.get('email'), current_site.domain, 'activate'])
         return super().form_valid(form)
 
+    def form_invalid(self, form):
+        context = {
+            'errors': form.errors,
+        }
+        return render(self.request, 'auth/register.html', context)
+
 
 class ActivateEmailView(TemplateView):
     template_name = 'auth/confirm-mail.html'
@@ -83,6 +89,12 @@ class LoginPageView(LoginMixin, LoginView):
         context = super().get_context_data(**kwargs)
         context['forms'] = LoginForm
         return context
+
+    def form_invalid(self, form):
+        context = {
+            'errors': 'Please enter correct username and password. Note both fields may be case-sensitive.',
+        }
+        return render(self.request, 'auth/login.html', context)
 
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
@@ -179,14 +191,3 @@ class ConfirmPasswordView(TemplateView):
     template_name = 'auth/confirm_password.html'
 
 
-class SendMessageAdmin(CreateView, LoginRequiredMixin):
-    form_class = ContactForm
-    template_name = 'apps/contact.html'
-    slug_field = 'username'
-    slug_url_kwarg = 'username'
-    success_url = reverse_lazy('contact_view')
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        form.save()
-        return redirect('contact_view', form.instance.author.username)

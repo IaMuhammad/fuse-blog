@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,6 +29,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -35,19 +46,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # my apps
     'apps.apps.AppsConfig',
 
     # installed apps
-    # 'django_object_actions',
     'ckeditor_uploader',
     'ckeditor',
     'fontawesomefree',
-    # 'fontawesome_5',
     'django_celery_results',
     'django_crontab',
-
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
 
 ]
 
@@ -79,10 +92,39 @@ TEMPLATES = [
                 'apps.utils.context_processors.context_blog',
                 'apps.utils.context_processors.context_best',
                 'apps.utils.context_processors.context_trending_posts',
+
+                # `allauth` needs this from django
+                'django.template.context_processors.request',
             ],
         },
     },
 ]
+
+SITE_ID = 1
+
+# Provider specific settings
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'APP': {
+            'client_id': 'ded11c3824cf1ae8d89c',
+            'secret': 'c9aa2da52fc05b26930e61ebfdb130b510e8d473',
+            'key': ''
+        }
+    },
+    'google': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'APP': {
+            'client_id': 'ded11c3824cf1ae8d89c',
+            'secret': 'c9aa2da52fc05b26930e61ebfdb130b510e8d473',
+            'key': ''
+        }
+    }
+}
 
 WSGI_APPLICATION = 'root.wsgi.application'
 
@@ -236,3 +278,19 @@ DEFAULT_FROM_EMAIL = 'Celery <djangoemail.fuse@gmail.com>'
 CRONJOBS = [
     ('0 0 * * *', 'apps.utils.cron.delete_blog')
 ]
+
+sentry_sdk.init(
+    dsn="https://ce866baa02a44cd7adc288212bc5c7ae@o4504382011015168.ingest.sentry.io/4504382037622784",
+    integrations=[
+        DjangoIntegration(),
+    ],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)

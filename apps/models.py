@@ -173,10 +173,17 @@ class BlogViewing(Model):
 class Message(Model):
     author = ForeignKey(CustomUser, CASCADE)
     message = TextField()
-    answer = RichTextUploadingField(null=True)
+    answer = RichTextUploadingField(null=True, blank=True)
     status = BooleanField(default=False)
     written_at = DateTimeField(auto_now_add=True)
 
-    # class Meta:
-    #     verbose_name = 'Xabar'
-    #     verbose_name_plural = 'Xabarlar'
+    class Meta:
+        verbose_name = 'Xabar'
+        verbose_name_plural = 'Xabarlar'
+
+class Region(Model):
+    name = CharField(max_length=255)
+
+class District(Model):
+    name = CharField(max_length=255)
+    region = ForeignKey('apps.Region', CASCADE)

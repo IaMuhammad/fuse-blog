@@ -2,7 +2,7 @@ from django.urls import path
 
 from apps import views
 from apps.views import MainPageView, BlogListView, AboutPageView, ContactPageVIew, BlogPageView, RegisterPageView, \
-    LoginPageView, CustomLogoutView, UserUpdateView, VerifyView, SendMessageAdmin, \
+    LoginPageView, CustomLogoutView, UserUpdateView, VerifyView, \
     AddBlogPageView, ForgotPasswordView, GeneratePdf, ActivateEmailView, ChangePasswordView, ResetPasswordView
 
 urlpatterns = [
@@ -13,7 +13,7 @@ urlpatterns = [
     path('blog-category/<str:slug>', BlogListView.as_view(), name='blog_category_view'),
     path('about', AboutPageView.as_view(), name='about_view'),
     # path('contact', ContactPageVIew.as_view(), name='contact_view'),
-    path('contact/<str:username>', SendMessageAdmin.as_view(), name='contact_view'),
+    path('contact/<str:username>', ContactPageVIew.as_view(), name='contact_view'),
     path('add_blog', AddBlogPageView.as_view(), name='add_blog_view'),
     path('blog/<str:slug>', BlogPageView.as_view(), name='post_view'),
     path('pdf/<str:slug>', GeneratePdf.as_view(), name='make_pdf'),

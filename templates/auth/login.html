@@ -18,6 +18,7 @@
                 <div class="signin-form">
 
                     <h2 class="form-title">Sign in</h2>
+                <h5 style="color: red">{{ errors }}</h5>
                     <form method="POST" action="{% url 'login_view' %}" class="register-form" id="login-form">
                         {% csrf_token %}
 
@@ -36,9 +37,9 @@
                                 <i class="zmdi zmdi-account material-icons-name"></i>
                             </label>
 
-                            <input type="text" name="username" id="your_name" placeholder="Username"/>
+                            <input type="text" name="username" id="your_name" placeholder="Username" value="{{ request.POST.username }}"/>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group">sett
                             <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
                             <input type="password" name="password" id="your_pass" placeholder="Password"/>
                         </div>
@@ -66,6 +67,9 @@
                             </li>
                             <li>
                                 <a href="#"><i class="display-flex-center zmdi zmdi-google"></i></a>
+                            </li>
+                            <li>
+                                <a href="#"><i class="display-flex-center zmdi zmdi-github"></i></a>
                             </li>
                         </ul>
                     </div>

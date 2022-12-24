@@ -17,30 +17,22 @@ class RegisterForm(ModelForm):
         new_password = self.cleaned_data['password']
         re_new_password = self.data['confirm_password']
         if re_new_password != new_password:
-            raise ValidationError('Parolni takshiring!')
+            raise ValidationError('Check your password.')
         return make_password(new_password)
 
-    # @atomic
-    # def save(self):
-    #     user = CustomUser.objects.create_user(
-    #         username=self.cleaned_data.get('username'),
-    #         email=self.cleaned_data.get('email'),
-    #         is_active=False
-    #     )
-    #     user.set_password(self.cleaned_data.get('password'))
-    #     user.save()
+    def clean_phone(self):
+        phone = self.cleaned_data['phone']
+        if not phone:
+            raise ValidationError('This is empty.')
+        c = 0
+        for i in phone:
+            if i.isdigit():
+                c += 1
+        if c != 9:
+            raise ValidationError('Enter correct phone number.')
 
 
 class LoginForm(AuthenticationForm):
-
-    def clean(self):
-        username = self.cleaned_data['username']
-        password = self.cleaned_data['password']
-
-        if not CustomUser.objects.filter(username=username):
-            raise ValidationError('username yoki parol xato kiritilgan!')
-        return super().clean()
-
     class Meta:
         model = CustomUser
         fields = ('username', 'password')
@@ -78,7 +70,7 @@ class CommentForm(ModelForm):
 class ContactForm(ModelForm):
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = ('message',)
 
 
 class ForgotPasswordForm(Form):

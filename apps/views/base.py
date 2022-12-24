@@ -3,21 +3,21 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views import View
 from django.views.generic import TemplateView, ListView, CreateView, DetailView, UpdateView, FormView
 
-from apps.forms import BlogForm, CommentForm
-from apps.models import Blog, Category, Comment, BlogViewing, Message
+from apps.forms import BlogForm, CommentForm, ContactForm
+from apps.models import Blog, Category, Comment, BlogViewing
 from apps.utils.make_pdf import render_to_pdf
 
 
 class GeneratePdf(DetailView):
     template_name = 'apps/make_pdf.html'
+
     def get(self, request, *args, **kwargs):
         blog = Blog.objects.filter(slug=kwargs.get('slug')).first()
         data = {
             'blog': blog,
-        'current_url': f'http://{get_current_site(self.request)}/pdf/{blog.slug}'
+            'current_url': f'http://{get_current_site(self.request)}/pdf/{blog.slug}'
 
         }
         pdf = render_to_pdf('apps/make_pdf.html', data)
@@ -87,7 +87,7 @@ class BlogPageView(FormView, DetailView):
         data = {
             'blog': blog,
             'author': request.user,
-            'coment': request.POST.get('message')
+            'comment': request.POST.get('message')
         }
         form = self.form_class(data)
         if form.is_valid():
@@ -97,13 +97,23 @@ class BlogPageView(FormView, DetailView):
 
 
 class ContactPageVIew(CreateView):
+    form_class = ContactForm
     template_name = 'apps/contact.html'
-    model = Message
-    fields = ('author', 'message')
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    success_url = reverse_lazy('contact_view')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.save()
+        return redirect('contact_view', form.instance.author.username)
+
+    def form_invalid(self, form):
+        return super().form_invalid(form)
 
 
 class AddBlogPageView(CreateView):
