@@ -33,7 +33,6 @@ class User(ModelAdmin):
 
     def first_name_field(self, obj):
         if obj.first_name:
-            print('salo,')
             return obj.first_name
         else:
             return 'null'
