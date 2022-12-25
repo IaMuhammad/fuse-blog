@@ -123,8 +123,7 @@ class Comment(ModelAdmin):
 @admin.register(Category)
 class Category(ModelAdmin):
     list_display = ('name',)
-    exclude = ('slug',)
-
+    readonly_fields = ('slug',)
 
 @admin.register(Message)
 class Message(ModelAdmin):

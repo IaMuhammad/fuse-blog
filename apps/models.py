@@ -4,12 +4,15 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django import template
 from django.contrib.auth.models import AbstractUser
 from django.db.models import Model, SlugField, CharField, ForeignKey, CASCADE, DateField, TextField, ImageField, \
-    SET_NULL, ManyToManyField, SET_DEFAULT, EmailField, TextChoices, DateTimeField, Manager, BooleanField, JSONField
+    SET_NULL, ManyToManyField, EmailField, TextChoices, DateTimeField, Manager, BooleanField, JSONField
 from django.utils.html import format_html
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+from apps.managers import UserManager
+
 register = template.Library()
+
 
 class Site(Model):
     name = CharField(max_length=255)
@@ -27,6 +30,7 @@ class Site(Model):
     def __str__(self):
         return self.name
 
+
 class CustomUser(AbstractUser):
     email = EmailField(max_length=255, unique=True)
     phone = CharField(max_length=255, unique=True, null=True, blank=True)
@@ -36,9 +40,11 @@ class CustomUser(AbstractUser):
     photo = ImageField(default='users/desfaultuser.png')
     is_active = BooleanField(default=False)
 
-#     # class Meta:
-#     #     verbose_name = 'Foydalanuvchi'
-#     #     verbose_name_plural = 'Foydalanuvchilar'
+    objects = UserManager()
+
+    #     class Meta:
+    #         verbose_name = 'Foydalanuvchi'
+    #         verbose_name_plural = 'Foydalanuvchilar'
 
     @property
     def years_old(self):
@@ -54,9 +60,9 @@ class Category(Model):
     slug = SlugField(max_length=255, unique=True)
     picture = ImageField(upload_to='%m', null=True, blank=True)
 
-    # class Meta:
-    #     verbose_name = 'Kategoriya'
-    #     verbose_name_plural = 'Kategoriyalar'
+    class Meta:
+        verbose_name = 'Kategoriya'
+        verbose_name_plural = 'Kategoriyalar'
 
     @property
     def blog_count(self):
@@ -65,8 +71,8 @@ class Category(Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-            while Blog.objects.filter(slug=self.slug).exists():
-                slug = Blog.objects.filter(slug=self.slug).first().slug
+            while Category.objects.filter(slug=self.slug).exists():
+                slug = Category.objects.filter(slug=self.slug).first().slug
                 if '-' in slug:
                     try:
                         if slug.split('-')[-1] in self.name:
@@ -77,6 +83,7 @@ class Category(Model):
                         self.slug = slug + '-1'
                 else:
                     self.slug += '-1'
+
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -87,14 +94,16 @@ class ActiveBlogsManager(Manager):
     def get_queryset(self):
         return super().get_queryset().filter(is_active=Blog.Active.ACTIVE).order_by('created_at')
 
+
 class CancelBlogsManager(Manager):
     def get_queryset(self):
         return super().get_queryset().filter(is_active=Blog.Active.CANCEL)
 
+
 class Blog(Model):
-    # class Meta:
-    #     verbose_name = 'Blog'
-    #     verbose_name_plural = 'Bloglar'
+    class Meta:
+        verbose_name = 'Blog'
+        verbose_name_plural = 'Bloglar'
 
     class Active(TextChoices):  # A subclass of Enum
         ACTIVE = 'active', _('active')
@@ -164,13 +173,13 @@ class Blog(Model):
 
 class Comment(Model):
     comment = TextField()
-    author = ForeignKey('apps.CustomUser', SET_DEFAULT, default=0)
+    author = ForeignKey('apps.CustomUser', CASCADE)
     blog = ForeignKey('apps.Blog', CASCADE, related_name='comment_set')
     created_at = DateTimeField(auto_now_add=True)
 
-    # class Meta:
-    #     verbose_name = 'Komentariya'
-    #     verbose_name_plural = 'Komentariyalar'
+    class Meta:
+        verbose_name = 'Komentariya'
+        verbose_name_plural = 'Komentariyalar'
 
     def __str__(self):
         return f'{self.author} -> {self.comment[:20]}'
@@ -199,8 +208,10 @@ class Message(Model):
         verbose_name = 'Xabar'
         verbose_name_plural = 'Xabarlar'
 
+
 class Region(Model):
     name = CharField(max_length=255)
+
 
 class District(Model):
     name = CharField(max_length=255)
