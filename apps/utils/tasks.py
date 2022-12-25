@@ -1,5 +1,6 @@
 from celery import shared_task
 from django.core.mail import EmailMessage, send_mail
+from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -11,11 +12,21 @@ from root.settings import EMAIL_HOST_USER
 
 @shared_task
 def send_email(email, message, subject):
+    print(email)
     print('start')
     from_email = EMAIL_HOST_USER
+    template = 'auth/email.html'
+    user = get_object_or_404(CustomUser, email=email)
+    message = render_to_string(template, {
+        'user': user,
+        'answer': message
+    })
+    print(user.username)
     recipient_list = [email]
-    result = send_mail(subject, message, from_email, recipient_list)
-    print('finish')
+    email = EmailMessage(subject, message, from_email, recipient_list)
+    email.content_subtype = 'html'
+    result = email.send()
+    print('Send mail')
     return result
 
 

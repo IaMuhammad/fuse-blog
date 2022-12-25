@@ -4,12 +4,29 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django import template
 from django.contrib.auth.models import AbstractUser
 from django.db.models import Model, SlugField, CharField, ForeignKey, CASCADE, DateField, TextField, ImageField, \
-    SET_NULL, ManyToManyField, SET_DEFAULT, EmailField, TextChoices, DateTimeField, Manager, BooleanField
+    SET_NULL, ManyToManyField, SET_DEFAULT, EmailField, TextChoices, DateTimeField, Manager, BooleanField, JSONField
 from django.utils.html import format_html
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 register = template.Library()
+
+class Site(Model):
+    name = CharField(max_length=255)
+    picture = ImageField()
+    about_us = TextField()
+    social = JSONField(blank=True, null=True)
+    adress = CharField(max_length=255)
+    email = EmailField()
+    phone = CharField(max_length=20)
+
+    class Meta:
+        verbose_name = 'Sayt haqida'
+        verbose_name_plural = 'Sayt haqida'
+
+    def __str__(self):
+        return self.name
+
 class CustomUser(AbstractUser):
     email = EmailField(max_length=255, unique=True)
     phone = CharField(max_length=255, unique=True, null=True, blank=True)
@@ -172,6 +189,7 @@ class BlogViewing(Model):
 
 class Message(Model):
     author = ForeignKey(CustomUser, CASCADE)
+    subject = CharField(max_length=255)
     message = TextField()
     answer = RichTextUploadingField(null=True, blank=True)
     status = BooleanField(default=False)

@@ -53,6 +53,7 @@ class BlogListView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
         context['news'] = Blog.active.all()
+        context['comment_count'] = Blog.active.all()
         context['path'] = self.request.path.split('/')[-1]
         return context
 

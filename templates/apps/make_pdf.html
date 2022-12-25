@@ -48,11 +48,11 @@
     <div class='header'>
         <p class='title'> {{ blog.title|safe }} </p>
         <img id='barcode'
-            src="https://api.qrserver.com/v1/create-qr-code/?data={{ current_url }}&amp;size=100x100"
-            alt=""
-            title="HELLO"
-            width="50"
-            height="50" />
+             src="https://api.qrserver.com/v1/create-qr-code/?data={{ current_url }}&amp;size=100x100"
+             alt=""
+             title="HELLO"
+             width="50"
+             height="50"/>
     </div>
     <div>
         {{ blog.description|safe }}
@@ -67,10 +67,10 @@
                     </div>
                     <div class="comment__item__content">
                         <div class="comment__item__content__header">
-                            <h5>{{ comment.author }}</h5>
                             <div class="data">
                                 <p>
-                                    <i class="far fa-clock"></i>{{ comment.created_at|date:'M d, Y' }}
+                                <h5>{{ comment.author }}: {{ comment.comment }}</h5>
+                                <i class="far fa-clock"></i>{{ comment.created_at|date:'M d, Y' }}
                                 </p>
                             </div>
                         </div>

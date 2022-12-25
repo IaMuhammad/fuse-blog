@@ -6,7 +6,7 @@ from django.urls import reverse, path
 from django.utils.html import format_html
 
 from apps import models
-from apps.models import Blog, Category, Comment, CustomUser, Message
+from apps.models import Blog, Category, Comment, CustomUser, Message, Site
 from apps.utils.tasks import send_email
 
 admin.site.site_header = "Django Blog Admin"
@@ -15,6 +15,17 @@ admin.site.index_title = "Welcome to Django BLOG Researcher Portal"
 
 
 # Register your models here.
+
+@register(Site)
+class Site(ModelAdmin):
+    list_display = ('name', 'about', 'pic')
+
+    def about(self, obj):
+        return obj.about_us[:20]
+
+    def pic(self, obj: Site):
+        return format_html(
+            f'<img style="border-radius: 5px;" width="100px" height="30px" src="{obj.picture.url}"/>')
 
 @register(CustomUser)
 class User(ModelAdmin):
@@ -36,7 +47,7 @@ class User(ModelAdmin):
 @register(Blog)
 class Blog(ModelAdmin):
     # change_form_template = "admin/base_site.html"
-    list_display = ('title', 'created_at', 'blog_pic', 'category_set', 'is_active_icon', 'status_button')
+    list_display = ('title_20', 'created_at', 'blog_pic', 'category_set', 'is_active_icon', 'status_button')
     list_filter = ('created_at', 'category', 'is_active')
     exclude = ('slug',)
     readonly_fields = ('is_active', 'slug')
@@ -82,6 +93,9 @@ class Blog(ModelAdmin):
 
         return format_html(', '.join(l))
 
+
+    def title_20(self, obj):
+        return obj.title[:50]
     def is_active_icon(self, obj: Blog):
         data = {
             'pending': '<i class="fas fa-circle-notch fa-spin"></i>',
@@ -102,6 +116,8 @@ class Blog(ModelAdmin):
 @admin.register(Comment)
 class Comment(ModelAdmin):
     list_display = ('author', 'blog')
+
+
 
 
 @admin.register(Category)

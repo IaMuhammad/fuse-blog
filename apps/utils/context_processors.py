@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from django.db.models import Count
 
-from apps.models import Category, Blog, BlogViewing
+from apps.models import Category, Blog, BlogViewing, Site
 
 
 def context_category(request):
@@ -29,4 +29,10 @@ def context_trending_posts(request):
 
     return {
         'trending_posts': blogs
+    }
+def context_site_info(request):
+    info = Site.objects.first()
+
+    return {
+        'info': info
     }

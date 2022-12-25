@@ -8,12 +8,11 @@
                         <div class="center-line-title">
                             <h5>About us</h5>
                         </div>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed et dolore magna aliqua.
-                            Quis ipsum suspendisse ultrices gravida lacus vel facilisis. </p>
+                        <p>{{ info.about_us|safe }}</p>
                         <div class="contact-method">
-                            <p><i class="fas fa-map-marker-alt"></i>Dar es Saalam,Tanzania</p>
-                            <p><i class="far fa-mobile-android"></i>+255 123456 | +255 123456789</p>
-                            <p><i class="far fa-envelope-open"></i>hello@fuse.com</p>
+                            <p><i class="fas fa-map-marker-alt"></i>{{ info.adress }}</p>
+                            <p><i class="far fa-mobile-android"></i>+{{ info.phone }}</p>
+                            <p><i class="far fa-envelope-open"></i>{{ info.email }}</p>
                         </div>
                     </div>
                 </div>

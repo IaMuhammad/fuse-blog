@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google',
 
 ]
 
@@ -92,6 +93,7 @@ TEMPLATES = [
                 'apps.utils.context_processors.context_blog',
                 'apps.utils.context_processors.context_best',
                 'apps.utils.context_processors.context_trending_posts',
+                'apps.utils.context_processors.context_site_info',
 
                 # `allauth` needs this from django
                 'django.template.context_processors.request',
@@ -119,8 +121,8 @@ SOCIALACCOUNT_PROVIDERS = {
         # (``socialaccount`` app) containing the required client
         # credentials, or list them here:
         'APP': {
-            'client_id': 'ded11c3824cf1ae8d89c',
-            'secret': 'c9aa2da52fc05b26930e61ebfdb130b510e8d473',
+            'client_id': '866914759741-qe9jemsr861go3rn57n4s8f84t3rgcpr.apps.googleusercontent.com',
+            'secret': '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',
             'key': ''
         }
     }
@@ -146,18 +148,18 @@ DATABASES = {
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    # },
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    # },
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    # },
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    # },
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 ]
 
 AUTH_USER_MODEL = 'apps.CustomUser'
@@ -187,6 +189,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CKEDITOR_UPLOAD_PATH = "media/"
+
+
 
 CKEDITOR_CONFIGS = {
     'default': {
@@ -250,6 +254,7 @@ CKEDITOR_CONFIGS = {
             'dialogui',
             'elementspath'
         ]),
+
     }
 }
 
