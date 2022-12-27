@@ -17,7 +17,8 @@ class GeneratePdf(DetailView):
         blog = Blog.objects.filter(slug=kwargs.get('slug')).first()
         data = {
             'blog': blog,
-            'current_url': f'http://{get_current_site(self.request)}/pdf/{blog.slug}'
+            'current_url': f"http://{self.request.headers['Host']}/blog/{blog.slug}",
+            'download': f"http://{self.request.headers['Host']}/pdf/{blog.slug}"
 
         }
         pdf = render_to_pdf('apps/make_pdf.html', data)
