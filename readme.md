@@ -60,3 +60,4 @@ It has many features, but here are some of the nicer ones:
 <p align="center">
 <img src="media/readme/admin_blog.gif" alt="this slowpoke moves" />
 </p>
+<h1>THE END</h1>

@@ -1,9 +1,8 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.sites.shortcuts import get_current_site
+from django.http import HttpResponse
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, ListView, CreateView, DetailView, UpdateView, FormView
+from django.views.generic import TemplateView, ListView, CreateView, DetailView, FormView
 
 from apps.forms import BlogForm, CommentForm, ContactForm
 from apps.models import Blog, Category, Comment, BlogViewing
@@ -129,9 +128,3 @@ class AddBlogPageView(CreateView):
         obj.title = form.data.get('title')
         obj.save()
         return redirect('post_view', obj.slug)
-
-
-class BLogUpdateView(UpdateView, LoginRequiredMixin):
-    model = Blog
-    fields = ('title', 'description', 'category', 'main_pic')
-    success_url = reverse_lazy('main_view')

@@ -76,6 +76,7 @@ class ContactForm(ModelForm):
 class ForgotPasswordForm(Form):
     email = EmailField()
 
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if not CustomUser.objects.filter(email=email).exists():
@@ -92,8 +93,7 @@ class ChangePasswordForm(Form):
     new_password = CharField(max_length=255)
     confirm_new_password = CharField(max_length=255)
 
-    def clean(self):
-        return super().clean()
+
 
     def clean_password(self):
         user = self.inictial['request'].user
