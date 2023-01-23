@@ -113,8 +113,6 @@ class ContactPageVIew(CreateView):
         form.save()
         return redirect('contact_view', form.instance.author.username)
 
-    def form_invalid(self, form):
-        return super().form_invalid(form)
 
 
 class AddBlogPageView(CreateView):

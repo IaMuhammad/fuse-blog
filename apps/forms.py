@@ -67,6 +67,7 @@ class CommentForm(ModelForm):
         exclude = ()
 
 
+
 class ContactForm(ModelForm):
     class Meta:
         model = Message
