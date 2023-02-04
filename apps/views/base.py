@@ -127,3 +127,4 @@ class AddBlogPageView(CreateView):
         obj.title = form.data.get('title')
         obj.save()
         return redirect('post_view', obj.slug)
+
