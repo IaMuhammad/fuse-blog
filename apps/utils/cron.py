@@ -1,4 +1,4 @@
-from datetime import datetime, date, timedelta
+from datetime import date, timedelta
 
 from apps.models import Blog
 
@@ -8,4 +8,3 @@ def delete_blog():
     delta = timedelta(7)
     date_delta = today - delta
     Blog.cancel.filter(created_at__lt=date_delta).delete()
-    print('adwsdawds')
