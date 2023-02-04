@@ -1,0 +1,2 @@
+2) /contact xabarlarni adminkada chiqadigan qilish kk, va tagida button(xabar yuborish [pochtasiga yuborilsin]) ✅
+14) django command (region, district) ✅
