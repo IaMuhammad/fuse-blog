@@ -128,3 +128,4 @@ class AddBlogPageView(CreateView):
         obj.save()
         return redirect('post_view', obj.slug)
 
+
