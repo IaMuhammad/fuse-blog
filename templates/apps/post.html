@@ -68,6 +68,8 @@
                                 <p class="paragraph">
                                     {{ blog.description|safe }}
                                 </p>
+
+
                                 <div class="post-card-quote -border">
                                     <div class="qoute__icon">
                                         <i class="fas fa-quote-left"></i>
@@ -106,7 +108,7 @@
                                     <div class="post-footer__author">
                                         <div class="author__avatar">
                                             <!-- img size 150 x 150 -->
-                                            <img src="{% static 'apps/assets/images/post_detail/auth.png' %}"
+                                            <img src="{{ blog.author.photo.url }}"
                                                  alt="Author avatar"/>
                                         </div>
                                         <!-- Author Info -->
@@ -166,65 +168,56 @@
                                     </div>
                                     <!-- comments  -->
                                     <div class="post-footer__comment">
-                                        <h3 class="comment-title"><span>3 comment</span></h3>
-                                        <div class="post-footer__comment__detail">
-
-                                            <div class="comment__item">
-                                                <div class="comment__item__avatar">
-                                                    <img src="{% static 'apps/assets/images/post_detail/avatar/1.png' %}"
-                                                         alt="Author avatar"/>
-                                                </div>
-                                                <div class="comment__item__content">
-                                                    <div class="comment__item__content__header">
-                                                        <h5>David Yu</h5>
-                                                        <div class="data">
-                                                            <p><i class="far fa-clock"></i>Nov 02, 2020</p>
-                                                            <p><i class="far fa-heart"></i>12</p>
-                                                            <p><i class="far fa-share-square"></i>1</p>
+                                        {% if blog.comment_count > 0 %}
+                                            <h3 class="comment-title"><span>{{ blog.comment_count }} comment</span></h3>
+                                            <div class="post-footer__comment__detail">
+                                                {% for commentary in commentaries %}
+                                                    <div class="comment__item">
+                                                        <div class="comment__item__avatar">
+                                                            <img src="{{ commentary.author.photo.url }}"
+                                                                 alt="Author avatar"/>
+                                                        </div>
+                                                        <div class="comment__item__content">
+                                                            <div class="comment__item__content__header">
+                                                                <h5>{{ commentary.author.username }}</h5>
+                                                                <div class="data">
+                                                                    <p>
+                                                                        <i class="far fa-clock"></i>{{ commentary.created_at }}
+                                                                    </p>
+                                                                    <p><i class="far fa-heart"></i>12</p>
+                                                                    <p><i class="far fa-share-square"></i>1</p>
+                                                                </div>
+                                                            </div>
+                                                            <p>
+                                                                {{ commentary.coment }}
+                                                            </p>
                                                         </div>
                                                     </div>
-                                                    <p>Exactly. E.g. In IoT doing Machine Learning at the Edge (as in
-                                                        Edge Computing) oftentimes Kubernetes or containers in
-                                                        general aren't possible. Serverless is the only lightweight code
-                                                        that can actually run there.</p>
-                                                </div>
+                                                {% endfor %}
                                             </div>
-
-                                            <div class="comment__item">
-                                                <div class="comment__item__avatar"><img
-                                                        src="{% static 'apps/assets/images/post_detail/avatar/3.png' %}"
-                                                        alt="Author avatar"/></div>
-                                                <div class="comment__item__content">
-                                                    <div class="comment__item__content__header">
-                                                        <h5>Rodgers </h5>
-                                                        <div class="data">
-                                                            <p><i class="far fa-clock"></i>Nov 02, 2020</p>
-                                                            <p><i class="far fa-heart"></i>12</p>
-                                                            <p><i class="far fa-share-square"></i>1</p>
-                                                        </div>
-                                                    </div>
-                                                    <p>Awesome article. Great job!!!
-                                                        It offers the elements to compounds the "Big Picture" which can
-                                                        guide our decisions.Thank you.</p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        {% endif %}
                                         <!-- comment Form -->
-                                        <h3 class="comment-title"><span>Leave a comment</span></h3>
-                                        <div class="post-footer__comment__form">
-                                            <form action="{% url 'post_view' object.slug %}" method="post">
-                                                {% csrf_token %}
-                                                <div class="row">
+                                        {% if user.is_authenticated %}
+
+                                            <h3 class="comment-title"><span>Leave a comment</span></h3>
+                                            <div class="post-footer__comment__form">
+                                                <form action="{% url 'post_view' blog.slug %}" method="post">
+                                                    {% csrf_token %}
+
+
+                                                    <div class="row">
                                                 <textarea cols="30" rows="5" placeholder="Messages"
                                                           name="message"></textarea>
-                                                </div>
-                                                <div class="center">
-                                                    <input type="hidden">
-                                                    <button type="submit" class="btn btn-outline-primary">Submit
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
+                                                    </div>
+                                                    <div class="center">
+                                                        <input type="hidden">
+                                                        <button type="submit" class="btn btn-outline-primary">Submit
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        {% endif %}
+
                                     </div>
                                 </div>
                             </div>

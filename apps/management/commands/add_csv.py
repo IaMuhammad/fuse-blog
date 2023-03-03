@@ -1,8 +1,9 @@
 import csv
 
 from django.core.management.base import BaseCommand
+from django.utils.crypto import get_random_string
 
-from apps.models import Region, District
+from apps.models import CustomUser, Region, District
 
 
 class Command(BaseCommand):
@@ -11,6 +12,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('type', type=str, help='This is name of database.')
         parser.add_argument('url', type=str, help='This is url of csv file.')
+
 
     def handle(self, *args, **kwargs):
         _type = kwargs['type']
@@ -30,7 +32,7 @@ class Command(BaseCommand):
                     for row in csvreader:
                         try:
                             District.objects.get_or_create(
-                                id=row[0],
+                                id = row[0],
                                 name=row[1],
                                 region_id=row[2]
                             )

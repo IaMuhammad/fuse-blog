@@ -1,8 +1,9 @@
-from django.http import HttpResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, ListView, CreateView, DetailView, FormView
+from django.views.generic import TemplateView, ListView, CreateView, DetailView, UpdateView, FormView
 
 from apps.forms import BlogForm, CommentForm, ContactForm
 from apps.models import Blog, Category, Comment, BlogViewing
@@ -49,7 +50,6 @@ class BlogListView(ListView):
     queryset = Blog.active.all()
     context_object_name = 'blogs'
     paginate_by = 4
-
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
@@ -114,6 +114,8 @@ class ContactPageVIew(CreateView):
         form.save()
         return redirect('contact_view', form.instance.author.username)
 
+    def form_invalid(self, form):
+        return super().form_invalid(form)
 
 
 class AddBlogPageView(CreateView):
@@ -125,7 +127,16 @@ class AddBlogPageView(CreateView):
         obj = form.save(commit=False)
         obj.author = self.request.user
         obj.title = form.data.get('title')
+        categories = form.cleaned_data.get('category').values_list('pk', flat=True)
+
         obj.save()
+        print()
+        obj.category.add(*categories)
+
         return redirect('post_view', obj.slug)
 
 
+class BLogUpdateView(UpdateView, LoginRequiredMixin):
+    model = Blog
+    fields = ('title', 'description', 'category', 'main_pic')
+    success_url = reverse_lazy('main_view')
